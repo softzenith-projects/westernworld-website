@@ -1,8 +1,8 @@
 # Western World Visa Services website
 
 Public marketing site for westernworldvisaservices.com, rebuilt in Next.js 16 + Tailwind v4. Every enquiry form posts
-to the CRM's public intake, so each submission becomes a lead (or is added to the person's open lead) and the student
-gets the email + WhatsApp acknowledgement.
+to the CRM's public intake, so each submission becomes a lead (or is added to the person's open lead). Email and
+WhatsApp acknowledgements to the student are not switched on in the CRM yet, so the site only promises a call back.
 
 This is a **tenant website**: it belongs to one client (Western World, CRM tenant `westernworld`) and changes whenever
 they ask. The CRM itself lives in [softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) and is

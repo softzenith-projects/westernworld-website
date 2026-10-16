@@ -135,7 +135,7 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
         </button>
         <span className="barcode hidden h-10 w-24 text-ink sm:block" aria-hidden />
       </div>
-      <p className="px-5 pb-5 text-xs text-slate-500 sm:px-7">A counsellor calls you back. We confirm on email and WhatsApp. No fees for counselling.</p>
+      <p className="px-5 pb-5 text-xs text-slate-500 sm:px-7">A counsellor calls you back. No fees for counselling.</p>
     </form>
   );
 }
