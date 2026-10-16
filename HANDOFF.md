@@ -1,4 +1,4 @@
-# Handoff — 2026-10-08 (TRUST1: visitor address to the CRM; production tenant slug)
+# Handoff — 2026-10-16 (W6: no email/WhatsApp promise; earlier TRUST1)
 
 Read `README.md` first (CRM connection, where content lives, git flow). CRM-side rules and history:
 [softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
@@ -14,11 +14,26 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W5 | Form validation in the browser (all forms), friendly error copy | done (on `main`) |
 | R1 | Whole-site code review: 5 fixes (CRM error mapping, thank-you email promise, mobile menu on Back, phone separators, dead code) | done (on `main`) |
 | W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done (on `main`, c1f260e) |
-| TRUST1 | `proxy.ts`: send the visitor's address + shared secret with enquiry calls (CRM `TrustedProxyFilter`); default tenant `westernworldvisaservices` | done (`develop`, uncommitted) |
+| TRUST1 | `proxy.ts`: send the visitor's address + shared secret with enquiry calls (CRM `TrustedProxyFilter`); default tenant `westernworldvisaservices` | done (branch `feat/trust1-proxy`, PR #1 into `develop`) |
+| W6 | Thank-you page and form notes no longer promise an email/WhatsApp confirmation (the CRM does not send them yet); thank-you shows call back, WhatsApp chat link, phone | done (branch `fix/thank-you-wording`, stacked on `feat/trust1-proxy`) |
 | next | Owner copy review → merge `develop` → `main`; hosting (Vercel Pro) + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, `CRM_PROXY_SECRET`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): TRUST1 — visitor address to the CRM behind Vercel (owner, 8 Oct)
+## Session (latest): W6 — no confirmation promise for now (owner, 16 Oct)
+
+### What I did
+- The CRM staging server keeps student emails in a test inbox and WhatsApp is not connected, so the site stopped
+  promising them: `app/thank-you/page.tsx` (cards: keep your phone handy / message us on WhatsApp via `SITE.whatsapp` /
+  call), the note under `EnquiryForm` and the boarding pass footnote. `lib/enquiry.ts` still adds `email=no`; unused
+  until confirmations come back.
+- Site on Vercel (testing): https://westernworld-website.vercel.app, deployed from `main` of
+  `softzenith-projects/westernworld-website`. Needs `CRM_API_URL=https://crm-staging-api.softzenithlabs.com` and
+  `NEXT_PUBLIC_CRM_TENANT=westernworldvisaservices` (owner sets them in Vercel).
+
+### Verification
+- `tsc`, `lint`, production build.
+
+## Session: TRUST1 — visitor address to the CRM behind Vercel (owner, 8 Oct)
 
 ### What I did
 - `proxy.ts` (Next 16 proxy, matcher = the two public CRM endpoints): removes any `x-crm-proxy-secret` /

@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, Mail, MessageCircle, Phone, PhoneCall } from "lucide-react";
+import { CheckCircle2, MessageCircle, Phone, PhoneCall } from "lucide-react";
 import { SITE, tel } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Thank you", robots: { index: false } };
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-/** Where every enquiry form lands after the CRM has accepted it. */
+/**
+ * Where every enquiry form lands after the CRM has accepted it. The CRM does not send the student an email or
+ * WhatsApp confirmation yet, so nothing here promises one; the `email=no` query (lib/enquiry.ts) is kept for when
+ * it does.
+ */
 export default async function ThankYouPage({ searchParams }: PageProps<"/thank-you">) {
   const q = await searchParams;
   const name = first(q.name);
-  // Email is optional on some forms (e.g. the home boarding pass): no inbox promise when none was given.
-  const emailed = first(q.email) !== "no";
   return (
     <section className="bg-gradient-to-b from-brand-light to-white">
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
@@ -21,26 +23,20 @@ export default async function ThankYouPage({ searchParams }: PageProps<"/thank-y
         </div>
         <h1 className="mt-6 text-3xl font-extrabold sm:text-4xl">Thank you{name ? `, ${name}` : ""}!</h1>
         <p className="mt-4 text-lg text-slate-600">
-          We have received your enquiry. Someone from our team will get in touch with you shortly.
+          We have received your enquiry. Our team will call you shortly.
         </p>
         <div className="mt-10 grid gap-4 text-left sm:grid-cols-3">
-          {emailed ? (
-            <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-              <Mail className="size-6 text-brand" />
-              <p className="mt-2 text-sm font-semibold">Check your inbox</p>
-              <p className="text-xs text-slate-500">We have emailed you a confirmation.</p>
-            </div>
-          ) : (
-            <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-              <PhoneCall className="size-6 text-brand" />
-              <p className="mt-2 text-sm font-semibold">Keep your phone handy</p>
-              <p className="text-xs text-slate-500">A counsellor will call you on the number you gave us.</p>
-            </div>
-          )}
+          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+            <PhoneCall className="size-6 text-brand" />
+            <p className="mt-2 text-sm font-semibold">Keep your phone handy</p>
+            <p className="text-xs text-slate-500">A counsellor will call you on the number you gave us.</p>
+          </div>
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <MessageCircle className="size-6 text-emerald-600" />
-            <p className="mt-2 text-sm font-semibold">WhatsApp</p>
-            <p className="text-xs text-slate-500">A confirmation is on its way on WhatsApp.</p>
+            <p className="mt-2 text-sm font-semibold">Prefer WhatsApp?</p>
+            <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-brand">
+              Message us on WhatsApp
+            </a>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <Phone className="size-6 text-accent" />
