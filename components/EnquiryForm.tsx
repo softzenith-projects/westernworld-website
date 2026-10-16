@@ -16,8 +16,8 @@ const CHECKS: Record<Field, (v: string) => string> = {
 
 /**
  * Every form on the site (Keep in touch, Call back, Request call back, Book now, Enroll now) is this one form with
- * different fields. It creates a lead in the CRM, which acknowledges the enquirer by email and WhatsApp, then shows
- * the thank-you page.
+ * different fields. It creates a lead in the CRM, then shows the thank-you page. (The CRM does not acknowledge the
+ * enquirer by email or WhatsApp yet, so the form promises a call back only.)
  */
 export default function EnquiryForm({
   title, subtitle, source, fields = ["name", "email", "mobile", "message"], courseLabel = "Course",
@@ -126,7 +126,7 @@ export default function EnquiryForm({
         <Send className="size-4" /> {busy ? "Sending…" : submitLabel}
       </button>
       <p className={`text-xs sm:col-span-2 ${dark ? "text-white/60" : "text-slate-400"}`}>
-        We confirm by email and WhatsApp, and someone from our team will get in touch with you.
+        Someone from our team will call you shortly.
       </p>
     </form>
   );

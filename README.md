@@ -1,11 +1,11 @@
 # Western World Visa Services website
 
 Public marketing site for westernworldvisaservices.com, rebuilt in Next.js 16 + Tailwind v4. Every enquiry form posts
-to the CRM's public intake, so each submission becomes a lead (or is added to the person's open lead) and the student
-gets the email + WhatsApp acknowledgement.
+to the CRM's public intake, so each submission becomes a lead (or is added to the person's open lead). Email and
+WhatsApp acknowledgements to the student are not switched on in the CRM yet, so the site only promises a call back.
 
 This is a **tenant website**: it belongs to one client (Western World, CRM tenant `westernworld`) and changes whenever
-they ask. The CRM itself lives in [codewithnmn/softzenith-crm](https://github.com/codewithnmn/softzenith-crm) and is
+they ask. The CRM itself lives in [softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) and is
 shared by all tenants. The two are connected only by the CRM's public enquiry API (below); no code is shared.
 
 ```bash
@@ -17,7 +17,8 @@ npm run build && npx next start -p 3001
 | Setting | Default | Meaning |
 |---|---|---|
 | `CRM_API_URL` | `http://localhost:8081` | CRM backend; `/api/*` is proxied to it (no CORS needed) |
-| `NEXT_PUBLIC_CRM_TENANT` | `westernworld` | CRM tenant slug that receives the enquiries (owner, 30 Sep 2026: Western World is the first tenant; onboard it before forms work) |
+| `NEXT_PUBLIC_CRM_TENANT` | `westernworldvisaservices` | CRM tenant slug that receives the enquiries (owner, 8 Oct 2026: the production slug; onboard it before forms work). Must equal the CRM's `tenants.slug` |
+| `CRM_PROXY_SECRET` | empty | Same value as the CRM's `CRM_TRUSTED_PROXY_SECRET` (32+ characters). Lets the CRM see each visitor's own address behind this site (`proxy.ts`); required in production, or the CRM's per-address enquiry limit counts all visitors together |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | empty | Cloudflare Turnstile captcha; leave empty locally (no captcha) |
 
 Copy `.env.example` to `.env.local` to change them. Production sets them on the hosting platform.
