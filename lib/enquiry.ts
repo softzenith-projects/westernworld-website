@@ -1,5 +1,5 @@
 /** Sends website enquiries to the CRM's public intake (the tenant is configured, never hard-coded). */
-export const CRM_TENANT = process.env.NEXT_PUBLIC_CRM_TENANT ?? "westernworld";
+export const CRM_TENANT = process.env.NEXT_PUBLIC_CRM_TENANT ?? "westernworldvisaservices";
 
 export type Enquiry = {
   fullName: string;
