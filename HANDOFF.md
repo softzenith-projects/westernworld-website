@@ -1,7 +1,7 @@
-# Handoff — 2026-10-05 (new logo, live-site wording, blue & white theme)
+# Handoff — 2026-10-08 (TRUST1: visitor address to the CRM; production tenant slug)
 
 Read `README.md` first (CRM connection, where content lives, git flow). CRM-side rules and history:
-[codewithnmn/softzenith-crm](https://github.com/codewithnmn/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
+[softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
 
 ## Task status
 
@@ -14,10 +14,29 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W5 | Form validation in the browser (all forms), friendly error copy | done (on `main`) |
 | R1 | Whole-site code review: 5 fixes (CRM error mapping, thank-you email promise, mobile menu on Back, phone separators, dead code) | done (on `main`) |
 | W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done (on `main`, c1f260e) |
-| next | Owner copy review → merge `develop` → `main`; hosting + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, Turnstile key) | todo |
+| TRUST1 | `proxy.ts`: send the visitor's address + shared secret with enquiry calls (CRM `TrustedProxyFilter`); default tenant `westernworldvisaservices` | done (`develop`, uncommitted) |
+| next | Owner copy review → merge `develop` → `main`; hosting (Vercel Pro) + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, `CRM_PROXY_SECRET`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): R1 — whole-site code review and fixes (owner request, 5 Oct)
+## Session (latest): TRUST1 — visitor address to the CRM behind Vercel (owner, 8 Oct)
+
+### What I did
+- `proxy.ts` (Next 16 proxy, matcher = the two public CRM endpoints): removes any `x-crm-proxy-secret` /
+  `x-crm-client-ip` the browser sent, then adds `CRM_PROXY_SECRET` and the visitor address (`x-real-ip`, else the
+  first `x-forwarded-for`). Without it, on Vercel the CRM would count every visitor as Vercel's address for its
+  per-address enquiry limit (5/min, 30/h) and captcha check. The CRM trusts the address only with the matching secret
+  (`CRM_TRUSTED_PROXY_SECRET`).
+- Default `NEXT_PUBLIC_CRM_TENANT` → `westernworldvisaservices` (owner, 8 Oct: production slug). README, `.env.example`.
+
+### Verification
+- `tsc`, `lint`, production build ok. A production build against a local header echo server: forged headers are
+  replaced; secret + visitor address arrive. Not yet checked on Vercel itself (do on the first preview deployment).
+
+### Open for the owner
+- Locally the onboarded tenant is still `western-world-visa-services` (`.env.local` sets it); production uses
+  `westernworldvisaservices`.
+
+## Session: R1 — whole-site code review and fixes (owner request, 5 Oct)
 
 ### Fixed
 - `serverFieldErrors` (lib/validation.ts) replaces the substring match: only the CRM's "field: reason" parts
