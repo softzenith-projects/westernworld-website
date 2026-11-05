@@ -1,7 +1,8 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { CheckCircle2, MapPin, Phone } from "lucide-react";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero, Section, SectionTitle } from "@/components/blocks";
+import { CtaBand, Gallery, PageHero, PracticeBand, Section, SectionTitle } from "@/components/blocks";
 import { ieltsCityCopy, pteCopy } from "@/content/copy";
 import { cities, media, type City } from "@/lib/content";
 import { SITE, tel } from "@/lib/site";
@@ -46,9 +47,10 @@ export function IeltsCityPage({ city }: { city: City }) {
       <WithCallback source={`IELTS classes in ${name}`} course={`IELTS coaching (${name})`}>
         <div className="prose-copy text-slate-600">{copy.intro.map((p) => <p key={p.slice(0, 40)}>{p}</p>)}</div>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {copy.features.map(([t, d]) => (
-            <div key={t} className="rounded-2xl border border-line bg-white p-5 shadow-sm">
-              <h3 className="flex items-center gap-2 font-bold"><CheckCircle2 className="size-5 text-accent" />{t}</h3>
+          {copy.features.map(([t, d], i) => (
+            <div key={t} style={{ "--i": i % 2 } as CSSProperties}
+                 className="reveal group rounded-2xl border border-line bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-lg">
+              <h3 className="flex items-center gap-2 font-bold"><CheckCircle2 className="size-5 text-accent transition duration-300 group-hover:scale-125 group-hover:-rotate-12" />{t}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">{d}</p>
             </div>
           ))}
@@ -58,6 +60,7 @@ export function IeltsCityPage({ city }: { city: City }) {
           <CallUs />
         </div>
       </WithCallback>
+      <PracticeBand tests={["/ielts-academy", "/ielts-general"]} course={`IELTS (${name})`} />
       <Gallery images={media.galleries.ieltsClasses} />
       <CityDirectory kind="ielts" />
       <CtaBand course={`IELTS coaching (${name})`} />
@@ -117,6 +120,7 @@ export function PteCityPage({ city }: { city: City }) {
       <WithCallback source={`PTE classes in ${name}`} course={`PTE coaching (${name}) – free 3-day trial`}>
         <PteContent city={name} />
       </WithCallback>
+      <PracticeBand tests={["/pte"]} course={`PTE (${name})`} />
       <Gallery images={media.galleries.ieltsClasses} title="Our students" />
       <CityDirectory kind="pte" />
       <CtaBand course={`PTE coaching (${name})`} />

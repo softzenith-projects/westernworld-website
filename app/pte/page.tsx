@@ -2,15 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Headphones, Mic, PenLine } from "lucide-react";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero } from "@/components/blocks";
+import { CtaBand, Gallery, PageHero, PracticeBand } from "@/components/blocks";
 import { media } from "@/lib/content";
 
-export const metadata: Metadata = { title: "PTE - Pearson English Language Tests" };
+export const metadata: Metadata = {
+  title: "PTE Coaching in Rohtak | PTE Academic Preparation",
+  description:
+    "PTE coaching in Rohtak and online: PTE Academic preparation for speaking, writing, reading and listening, practised on the computer the way the real test works.",
+};
 
 export default function PtePage() {
   return (
     <>
-      <PageHero title="PTE – Pearson English Language Tests" crumbs={[{ label: "Services" }, { label: "PTE" }]} image="/images/slide3.jpg" />
+      <PageHero title="PTE – Pearson English Language Tests" crumbs={[{ label: "Services" }, { label: "PTE" }]} image="/images/slide3.jpg"
+                subtitle="PTE coaching in Rohtak and online, for PTE Academic." />
       <WithCallback source="Request call back (PTE)" course="PTE">
         <h2 className="text-2xl font-bold">Pearson English Language Tests</h2>
         <div className="prose-copy mt-4 text-slate-600">
@@ -29,7 +34,7 @@ export default function PtePage() {
         </div>
         <Link href="/pte-classes-india" className="mt-8 inline-flex items-center gap-2 font-bold text-accent">See our PTE classes <ArrowRight className="size-4" /></Link>
       </WithCallback>
-      <Gallery images={media.galleries.ieltsGeneral} title="Our students" />
+      <PracticeBand tests={["/pte"]} course="PTE" />      <Gallery images={media.galleries.ieltsGeneral} title="Our students" />
       <CtaBand course="PTE" />
     </>
   );

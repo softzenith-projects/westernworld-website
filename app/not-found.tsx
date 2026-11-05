@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { LostScene } from "@/components/Illustrations";
 import { enquire } from "@/lib/site";
 
 export default function NotFound() {
   return (
     <section className="mx-auto max-w-xl px-4 py-24 text-center">
+      <LostScene className="mx-auto max-w-xs" />
       <p className="text-6xl font-extrabold text-brand/20">404</p>
       <h1 className="mt-4 text-3xl font-extrabold">This page has moved</h1>
       <p className="mt-3 text-slate-600">We have a new website. Find what you need from the menu, or ask us and someone from our team will get in touch with you.</p>

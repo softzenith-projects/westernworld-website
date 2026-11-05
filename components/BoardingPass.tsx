@@ -6,36 +6,59 @@ import { ArrowRight, Plane } from "lucide-react";
 import { FieldError, invalid, useFormChecks } from "@/components/FormChecks";
 import { Turnstile } from "@/components/Turnstile";
 import { submitEnquiry, thankYouQuery } from "@/lib/enquiry";
-import { checkEmail, checkName, checkPhone, normalisePhone, serverFieldErrors, tidy } from "@/lib/validation";
+import { checkEmail, checkName, checkOther, checkPhone, checkScore, normalisePhone, serverFieldErrors, tidy } from "@/lib/validation";
 import { DESTINATIONS } from "@/lib/site";
 
-const WHEN = ["Within 6 months", "In 6–12 months", "In more than a year", "Not sure yet"];
+// Options as the owner wrote them (20 Oct 2026).
+const WHEN = ["As early as possible", "Within 3 months", "In 3–6 months", "Not sure yet"];
 const TEST = ["Not taken yet", "Preparing now", "Have my score", "Need coaching"];
-
-const CHECKS = {
-  name: (v: string) => (tidy(v) ? checkName(v) : "Every boarding pass needs a passenger name. Yours, please ✈️"),
-  mobile: checkPhone,
-  email: (v: string) => checkEmail(v, false),
-};
+const HAVE_SCORE = "Have my score";
+const SCORE_TESTS = ["IELTS", "PTE", "Duolingo", "Other"];
+/** Score boxes: field name, full name, the owner's short label. */
+const BANDS = [
+  ["listening", "Listening", "L"], ["reading", "Reading", "R"], ["writing", "Writing", "W"], ["speaking", "Speaking", "S"],
+  ["overall", "Overall", "Overall"],
+] as const;
+/** "To" value for a country that is not in the list; the student types it. */
+const OTHER = "other";
 
 /**
  * The home-page counselling form, styled as a boarding pass. It asks the three things a counsellor needs first
- * (where, when, English test) so the lead arrives in the CRM already qualified.
+ * (where, when, English test, with the scores if they have them) so the lead arrives in the CRM already qualified.
  */
 export default function BoardingPass({ source = "Boarding pass (home)" }: { source?: string }) {
   const router = useRouter();
   const [to, setTo] = useState("");
+  const [otherCountry, setOtherCountry] = useState("");
+  const [test, setTest] = useState(TEST[0]);
+  const [scoreTest, setScoreTest] = useState(SCORE_TESTS[0]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const dest = DESTINATIONS.find((d) => d.slug === to);
-  const checks = useFormChecks(CHECKS);
+  // Fields that are not on screen (e.g. the scores before "Have my score") are skipped by the checks.
+  const checks = useFormChecks({
+    name: (v: string) => (tidy(v) ? checkName(v) : "Every boarding pass needs a passenger name. Yours, please ✈️"),
+    mobile: checkPhone,
+    email: (v: string) => checkEmail(v, false),
+    otherCountry: checkOther("country", "Australia"),
+    otherTest: checkOther("test", "TOEFL"),
+    ...Object.fromEntries(BANDS.map(([name, full]) => [name, (v: string) => checkScore(v, scoreTest, full)])),
+  });
+  const otherField = checks.field("otherCountry");
+
+  // The big "To" code: the airport code, or the first letters of the country typed under "Other".
+  const code = to === OTHER ? otherCountry.replace(/[^\p{L}]/gu, "").slice(0, 3).toUpperCase() : dest?.code;
+  const place = to === OTHER ? tidy(otherCountry) || "Other country" : dest?.name;
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     if (!checks.validate(e.currentTarget)) return;
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    const country = to === OTHER ? tidy(f.otherCountry) : dest?.name;
+    const testName = f.scoreTest === "Other" ? tidy(f.otherTest) : f.scoreTest;
+    const scores = BANDS.filter(([name]) => f[name]?.trim()).map(([name, full]) => `${full} ${f[name].trim()}`);
     setBusy(true);
     try {
       await submitEnquiry({
@@ -43,8 +66,13 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
         phone: normalisePhone(f.mobile) ?? f.mobile,
         email: f.email.trim().toLowerCase() || undefined,
         serviceInterest: "Free counselling",
-        preferredCountry: dest?.name,
-        message: [`Destination: ${dest?.name ?? "Not decided"}`, `Planning to go: ${f.when}`, `English test: ${f.test}`].join("\n"),
+        preferredCountry: country,
+        message: [
+          `Destination: ${country ?? "Not decided"}`,
+          `Planning to go: ${f.when}`,
+          `English test: ${f.test}${f.test === HAVE_SCORE ? ` (${testName})` : ""}`,
+          ...(f.test === HAVE_SCORE && scores.length ? [`Scores: ${scores.join(" · ")}`] : []),
+        ].join("\n"),
         sourceDetail: `westernworldvisaservices.com: ${source}`,
         website: f.website || undefined,
         captchaToken: f["cf-turnstile-response"] || undefined,
@@ -84,17 +112,26 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
           </div>
           <label className="relative block text-right">
             <span className={label}>To</span>
-            <span className={`block font-mono text-4xl font-medium tracking-tight sm:text-5xl ${dest ? "text-accent" : "text-slate-300"}`}>{dest?.code ?? "???"}</span>
-            <span className="block text-xs text-slate-500 underline decoration-dotted underline-offset-2">{dest ? dest.name : "Choose country ▾"}</span>
+            <span className={`block font-mono text-4xl font-medium tracking-tight sm:text-5xl ${code ? "text-accent" : "text-slate-300"}`}>{code || "???"}</span>
+            <span className="block max-w-36 truncate text-xs text-slate-500 underline decoration-dotted underline-offset-2">{place ?? "Choose country ▾"}</span>
             <select name="to" value={to} onChange={(e) => setTo(e.target.value)} aria-label="Where do you want to study?"
                     className="absolute inset-0 cursor-pointer opacity-0">
               <option value="">Not decided yet</option>
               {DESTINATIONS.map((d) => <option key={d.slug} value={d.slug}>{d.name} ({d.code})</option>)}
+              <option value={OTHER}>Other country (type the name)</option>
             </select>
           </label>
         </div>
 
         <div className="mt-6 grid gap-x-5 gap-y-4 sm:grid-cols-2">
+          {to === OTHER && (
+            <label className="sm:col-span-2"><span className={label}>Which country? *</span>
+              <input {...otherField} value={otherCountry} maxLength={60} autoComplete="off" placeholder="Type the country, e.g. Australia"
+                     onChange={(e) => { setOtherCountry(e.target.value); otherField.onChange(e); }}
+                     className={`${field} ${invalid(!!checks.errors.otherCountry)}`} />
+              <FieldError {...checks.error("otherCountry")} />
+            </label>
+          )}
           <label className="sm:col-span-2"><span className={label}>Passenger name *</span>
             <input {...checks.field("name")} required maxLength={200} autoComplete="name" placeholder="Your full name"
                    className={`${field} ${invalid(!!checks.errors.name)}`} />
@@ -114,8 +151,48 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
             <select name="when" className={field} defaultValue={WHEN[0]}>{WHEN.map((w) => <option key={w}>{w}</option>)}</select>
           </label>
           <label><span className={label}>English test</span>
-            <select name="test" className={field} defaultValue={TEST[0]}>{TEST.map((t) => <option key={t}>{t}</option>)}</select>
+            <select name="test" className={field} value={test} onChange={(e) => setTest(e.target.value)}>
+              {TEST.map((t) => <option key={t}>{t}</option>)}
+            </select>
           </label>
+
+          {test === HAVE_SCORE && (
+            <div className="rounded-xl border border-dashed border-line bg-paper/60 p-3 sm:col-span-2 sm:p-4">
+              <fieldset>
+                <legend className={label}>Which test?</legend>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {SCORE_TESTS.map((t) => (
+                    <label key={t}>
+                      <input type="radio" name="scoreTest" value={t} checked={scoreTest === t} onChange={() => setScoreTest(t)} className="peer sr-only" />
+                      <span className="block cursor-pointer rounded-full border border-line bg-white px-3.5 py-1.5 text-sm text-slate-600 transition peer-checked:border-ink peer-checked:bg-ink peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent">
+                        {t}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+              {scoreTest === "Other" && (
+                <label className="mt-3 block"><span className={label}>Test name *</span>
+                  <input {...checks.field("otherTest")} maxLength={40} autoComplete="off" placeholder="e.g. TOEFL"
+                         className={`${field} ${invalid(!!checks.errors.otherTest)}`} />
+                  <FieldError {...checks.error("otherTest")} />
+                </label>
+              )}
+              <fieldset className="mt-4">
+                <legend className={label}>Scores <span className="normal-case tracking-normal">(optional)</span></legend>
+                <div className="mt-1 grid grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.5fr)] gap-2 sm:gap-3">
+                  {BANDS.map(([name, full, short]) => (
+                    <label key={name} className="text-center">
+                      <span className="tag block text-slate-400"><abbr title={full} className="no-underline" aria-hidden>{short}</abbr><span className="sr-only">{full}</span></span>
+                      <input {...checks.field(name)} inputMode="decimal" maxLength={5} autoComplete="off" placeholder="–"
+                             className={`${field} text-center font-mono ${invalid(!!checks.errors[name])}`} />
+                    </label>
+                  ))}
+                </div>
+                {BANDS.map(([name]) => <FieldError key={name} {...checks.error(name)} />)}
+              </fieldset>
+            </div>
+          )}
         </div>
         <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[10000px] h-0 w-0" />
         <Turnstile key={attempt} className="mt-4" />

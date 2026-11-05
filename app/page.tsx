@@ -1,17 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BadgeCheck, ClipboardCheck, MapPin, Plus, Target, UserRound } from "lucide-react";
+import type { CSSProperties } from "react";
+import {
+  ArrowRight, ArrowUpRight, BadgeCheck, ClipboardCheck, MapPin, Plus, Route, Stethoscope,
+  Target, Timer, UserRound, UsersRound,
+} from "lucide-react";
 import BoardingPass from "@/components/BoardingPass";
+import CountUp from "@/components/CountUp";
+import NumbersBand from "@/components/NumbersBand";
+import JourneyRoute from "@/components/JourneyRoute";
 import NewsletterBox from "@/components/NewsletterBox";
 import VideoStories from "@/components/VideoStories";
 import WallOfWins from "@/components/WallOfWins";
-import { Packages, Section, SectionTitle } from "@/components/blocks";
-import { DeparturesBoard, JourneyRoute } from "@/components/journey";
+import { BranchList, Packages, SampleTests, Section, SectionTitle } from "@/components/blocks";
+import { DeparturesBoard } from "@/components/journey";
 import { NewsSection } from "@/components/news";
 import { HOME_PACKAGES } from "@/content/copy";
-import { LEGS, TESTS } from "@/content/services";
-import { FEATURED_WINS, SCORECARDS, VISA_WINS } from "@/content/testimonials";
-import { DESTINATIONS, SITE, enquire, tel } from "@/lib/site";
+import { LEGS } from "@/content/services";
+import { STATS } from "@/content/stats";
+import { FEATURED_WINS, SCORECARDS, VISA_POSTERS, VISA_WINS, winLabel } from "@/content/testimonials";
+import { BRANCHES, DESTINATIONS, SITE, enquire, tel } from "@/lib/site";
 
 const FAQ = [
   ["What type of learning experience should I expect?",
@@ -37,7 +45,18 @@ const COACHING = [
   ["3:1 faculty to student ratio", "You will always have multiple trainers collectively working on you to achieve your desired band, with daily private classes to learn key concepts and get your doubts answered."],
 ];
 
-const STATS = [["2000+", "Enrolled students"], ["600+", "Reviews"], ["40+", "Courses"], ["375+", "Publications"]];
+/** An icon per coaching stage (same order as COACHING). */
+const COACHING_ICONS = [Stethoscope, Route, Timer, UsersRound];
+
+
+/** The owner's search phrases (20 Oct 2026), each linked to the page that answers it. */
+const LOCAL = [
+  ["UK visa", "Student and visitor visas for the UK: documents, funds and the online form, checked before you apply.", "/visa-assistance#uk-visa"],
+  ["Canada visa", "Study permits and visitor visas for Canada, with a file that tells one consistent story.", "/visa-assistance#canada-visa"],
+  ["Europe visa", "Student and visitor visas for Germany, Finland, Ireland, Malta, Cyprus and more.", "/visa-assistance#europe-visa"],
+  ["IELTS coaching in Rohtak", "IELTS Academic, General and UKVI, in class or online, with regular mock tests.", "/ielts-academy"],
+  ["PTE coaching in Rohtak", "PTE Academic practice on the computer, the way the real test works.", "/pte"],
+] as const;
 
 /** "Welcome" text from the live site (westernworldvisaservices.com), lightly corrected. */
 const WELCOME = [
@@ -53,6 +72,9 @@ const HIGHLIGHTS = [
   ["Visa Support & Filing", "Western World Visa Services helps with the visa support and filing process for renowned universities.", "/visa-assistance"],
   ["IELTS | PTE Training", "Western World Visa Services started its journey with a clear vision to be a pioneer in the field of immigration and IELTS / PTE / CELPIP training.", "/services/english-test-preparation"],
 ] as const;
+
+/** "Bahadurgarh, Rohini, Tohana or Dwarka" */
+const OTHER_BRANCHES = BRANCHES.filter((b) => !b.head).map((b) => b.name).join(", ").replace(/, ([^,]*)$/, " or $1");
 
 const serviceCount = LEGS.reduce((n, l) => n + l.services.length, 0);
 
@@ -83,7 +105,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-10 pb-16 lg:grid-cols-[1.1fr_1fr] lg:pt-16 lg:pb-24">
           <div>
             <p className="tag inline-flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-ink">
-              <span className="size-1.5 rounded-full bg-accent" /> Study abroad · Visa · IELTS / PTE · Rohtak
+              <span className="size-1.5 rounded-full bg-accent" /> Visa consultant · IELTS / PTE coaching · Rohtak
             </p>
             <h1 className="mt-6 text-[2.75rem] leading-[0.98] font-semibold sm:text-7xl xl:text-[5.25rem]">
               Every step to your campus abroad.{" "}
@@ -109,15 +131,15 @@ export default function Home() {
 
             <Link href="#wins" className="group mt-10 flex w-fit items-center gap-4 rounded-2xl border border-line bg-white p-3 pr-5 shadow-sm transition hover:border-accent hover:shadow-md">
               <span className="flex -space-x-3">
-                {FEATURED_WINS.slice(0, 5).map((src) => (
+                {FEATURED_WINS.slice(0, 5).map(({ src }) => (
                   <span key={src} className="relative size-14 overflow-hidden rounded-full ring-3 ring-white">
                     <Image src={src} alt="" fill sizes="56px" className="object-cover object-[50%_25%]" />
                   </span>
                 ))}
               </span>
               <span className="text-sm leading-snug text-slate-600">
-                <span className="flex items-center gap-1 font-semibold text-ink"><BadgeCheck className="size-4 text-accent" />{VISA_WINS.length} visas, {SCORECARDS.length} scorecards</span>
-                photographed at our office.
+                <span className="flex items-center gap-1 font-semibold text-ink"><BadgeCheck className="size-4 text-accent" />4k+ students with a study visa</span>
+                and 5k+ tourist visas, and counting.
                 <span className="block font-medium text-accent group-hover:underline">See our students →</span>
               </span>
             </Link>
@@ -129,14 +151,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Wall of wins (testimonials): straight after the hero, photos are our strongest proof ── */}
+      <NumbersBand />
+
+      {/* ── Wall of wins (testimonials): straight after the numbers, photos are our strongest proof ── */}
       <section id="wins" className="relative scroll-mt-24 border-t border-line bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <SectionTitle eyebrow="Wall of wins" title={<>Not stock photos.<br />Our students, their visas.</>}
-                          intro="Every photo was taken at our office the day a student collected their passport, or got their IELTS result." />
+            <SectionTitle eyebrow="Wall of wins" title={<>4,000+ happy students.<br />One visa at a time.</>}
+                          intro="Not stock photos: every student here collected their passport with the visa at our office. Filter by country, or flip through the congratulations posters." />
             <dl className="mb-10 grid shrink-0 grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line lg:mb-14">
-              {[[VISA_WINS.length, "Visas on camera"], [SCORECARDS.length, "IELTS scorecards"], ["2000+", "Students enrolled"]].map(([n, label]) => (
+              {[[VISA_WINS.length, "Visas on camera"], [VISA_POSTERS.length, "Posters"], [SCORECARDS.length, "IELTS scorecards"]].map(([n, label]) => (
                 <div key={label} className="flex flex-col bg-paper px-5 py-4">
                   <dt className="tag order-2 text-slate-500">{label}</dt>
                   <dd className="font-display text-3xl font-semibold text-brand">{n}</dd>
@@ -150,6 +174,29 @@ export default function Home() {
               All success stories <ArrowUpRight className="size-3.5" />
             </Link>
           </p>
+        </div>
+      </section>
+
+      {/* ── Congratulations posters reel (pauses under the pointer) ── */}
+      <section aria-labelledby="posters-title" className="overflow-hidden border-t border-line bg-paper py-12 lg:py-16">
+        <div className="mx-auto mb-8 flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4">
+          <div>
+            <p className="tag text-accent">Fresh off the press</p>
+            <h3 id="posters-title" className="mt-2 text-3xl font-semibold">Congratulations, you are flying!</h3>
+          </div>
+          <Link href="/success-stories" className="tag inline-flex items-center gap-1 text-ink hover:text-accent">
+            See all {VISA_POSTERS.length} posters <ArrowUpRight className="size-3.5" />
+          </Link>
+        </div>
+        <div className="marquee-hover-pause" aria-hidden>
+          <div className="marquee flex w-max gap-4 [animation-duration:110s]">
+            {[0, 1].map((copy) => VISA_POSTERS.map((p) => (
+              <div key={`${copy}-${p.src}`} title={winLabel(p)}
+                   className="relative size-52 shrink-0 overflow-hidden rounded-xl bg-white shadow-lg shadow-brand-dark/10 ring-1 ring-line transition duration-300 hover:-translate-y-1.5 hover:rotate-[-1.5deg] hover:shadow-2xl sm:size-60">
+                <Image src={p.src} alt="" fill sizes="240px" className="object-contain" />
+              </div>
+            )))}
+          </div>
         </div>
       </section>
 
@@ -179,8 +226,8 @@ export default function Home() {
           </div>
           <ul className="grid content-start gap-4">
             {HIGHLIGHTS.map(([title, text, href], n) => (
-              <li key={title}>
-                <Link href={href} className="group flex gap-5 rounded-xl border border-line bg-white p-6 transition hover:border-accent hover:shadow-lg hover:shadow-brand-dark/5">
+              <li key={title} className="reveal" style={{ "--i": n } as CSSProperties}>
+                <Link href={href} className="group flex gap-5 rounded-xl border border-line bg-white p-6 transition duration-300 hover:translate-x-1 hover:border-accent hover:shadow-lg hover:shadow-brand-dark/5">
                   <span className="font-mono text-sm text-accent">0{n + 1}</span>
                   <span>
                     <span className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
@@ -231,7 +278,7 @@ export default function Home() {
               We help with universities and colleges in {DESTINATIONS.length} countries: courses, admissions,
               scholarships and the visa. Pick a destination to see its universities.
             </p>
-            <Image src="/ieltsstu/ielts30.jpeg" alt="A Western World student receiving her visa at our office" width={640} height={600}
+            <Image src="/wins/visa-070.jpg" alt="A Western World student receiving her visa at our office" width={640} height={600}
                    sizes="(min-width: 1024px) 33vw, 100vw" className="mt-8 hidden aspect-[4/3] rounded-xl object-cover object-[50%_35%] lg:block" />
           </div>
           <DeparturesBoard />
@@ -240,20 +287,9 @@ export default function Home() {
 
       {/* ── Test prep ───────────────────────────────────────── */}
       <Section id="test-prep" className="bg-white">
-        <SectionTitle eyebrow="Test prep" title="Get the score. Then get the seat." intro="Coaching for every major English test, online or in our classrooms, with a free trial class first." />
-        <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-3 lg:grid-cols-6">
-          {TESTS.map((t) => (
-            <li key={t.name}>
-              <Link href={t.href} className="group flex h-full min-h-32 flex-col justify-between gap-3 bg-white p-5 transition hover:bg-ink">
-                <ArrowUpRight className="size-5 self-end text-slate-300 transition group-hover:text-sun" />
-                <span>
-                  <span className="block font-display text-lg leading-tight font-semibold text-ink group-hover:text-white">{t.name}</span>
-                  <span className="mt-1 block text-xs text-slate-500 group-hover:text-white/60">{t.note}</span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <SectionTitle eyebrow="Test prep" title="Get the score. Then get the seat."
+                      intro="Coaching for every major English test, online or in our classrooms. Try the official free sample test first, then a free trial class with us." />
+        <SampleTests />
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_1.3fr]">
           <div>
@@ -264,21 +300,27 @@ export default function Home() {
                 [<Target key="t" />, "Customized study plan for every student", "Students are trained on their strengths and weaknesses through a tailor-made study plan."],
                 [<ClipboardCheck key="c" />, "Comprehensive mock test series", "Comprehensive mock tests after completion of every module."],
               ].map(([icon, title, text]) => (
-                <div key={String(title)} className="flex gap-4 rounded-xl border border-line p-4">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper text-ink [&_svg]:size-5">{icon}</span>
+                <div key={String(title)} className="reveal group flex gap-4 rounded-xl border border-line p-4 transition duration-300 hover:border-accent hover:shadow-lg hover:shadow-brand-dark/5">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper text-ink transition duration-300 group-hover:rotate-[-10deg] group-hover:bg-accent group-hover:text-white [&_svg]:size-5">{icon}</span>
                   <span><span className="block font-semibold text-ink">{title}</span><span className="text-sm text-slate-600">{text}</span></span>
                 </div>
               ))}
             </div>
           </div>
-          <ol className="relative space-y-0 border-l-2 border-dashed border-line pl-8">
-            {COACHING.map(([title, text], n) => (
-              <li key={title} className="relative pb-8 last:pb-0">
-                <span className="absolute top-0 -left-[2.65rem] flex size-8 items-center justify-center rounded-full bg-accent font-mono text-xs text-white">{n + 1}</span>
-                <h4 className="text-xl font-semibold">{title}</h4>
-                <p className="mt-1 text-slate-600">{text}</p>
-              </li>
-            ))}
+          <ol className="relative ml-2 space-y-0 border-l-2 border-dashed border-line pl-10">
+            {COACHING.map(([title, text], n) => {
+              const Icon = COACHING_ICONS[n];
+              return (
+                <li key={title} className="group relative pb-8 last:pb-0">
+                  <span className="absolute top-0 -left-[3.85rem] flex size-11 items-center justify-center rounded-xl bg-accent text-white shadow-md ring-4 ring-white transition duration-300 group-hover:scale-110 group-hover:rotate-[-8deg] group-hover:bg-ink">
+                    <Icon className="size-5" />
+                    <span className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-sun font-mono text-[10px] text-ink">{n + 1}</span>
+                  </span>
+                  <h4 className="text-xl font-semibold transition group-hover:text-accent">{title}</h4>
+                  <p className="mt-1 text-slate-600">{text}</p>
+                </li>
+              );
+            })}
           </ol>
         </div>
 
@@ -295,11 +337,11 @@ export default function Home() {
       <Section>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="relative">
-            <Image src="/ieltsstu/ielts20.jpeg" alt="A Western World counsellor handing a student his visa" width={1280} height={720}
+            <Image src="/wins/uk-lokesh-127.jpg" alt="A Western World counsellor handing a student his visa" width={1280} height={720}
                    sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/11] w-full rounded-xl object-cover" />
             <div className="absolute -bottom-6 left-6 rounded-xl bg-sun px-5 py-4 shadow-xl">
-              <p className="font-display text-4xl font-semibold text-ink">2000+</p>
-              <p className="tag text-ink/70">Enrolled students</p>
+              <p className="font-display text-4xl font-semibold text-ink">4,000+</p>
+              <p className="tag text-ink/70">{STATS[0].label}</p>
             </div>
           </div>
           <div>
@@ -322,15 +364,55 @@ export default function Home() {
                 benchmarks in tune with global competencies.
               </p>
             </div>
-            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-              {STATS.map(([n, label]) => (
+            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line">
+              {STATS.map(({ n, label }) => (
                 <div key={label} className="flex flex-col bg-paper p-4">
                   <dt className="tag order-2 text-slate-500">{label}</dt>
-                  <dd className="font-display text-3xl font-semibold text-ink">{n}</dd>
+                  <dd className="font-display text-3xl font-semibold text-ink">{n ? <CountUp to={n} suffix="+" /> : "Countless"}</dd>
                 </div>
               ))}
             </dl>
           </div>
+        </div>
+      </Section>
+
+      {/* ── Rohtak: the owner's search phrases, in words a student would use ── */}
+      <Section id="rohtak" className="border-t border-line bg-white">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <SectionTitle eyebrow="Rohtak · Delhi NCR" title="Your visa consultant in Rohtak" />
+            <div className="-mt-4 space-y-4 text-slate-600">
+              <p>
+                Looking for a visa agent in Rohtak you can meet in person? Western World Visa Services is a visa
+                consultant in Rohtak for UK visa, Canada visa and Europe visa applications, with IELTS coaching in
+                Rohtak and PTE coaching in Rohtak under the same roof.
+              </p>
+              <p>
+                One team handles your English test, your university applications and your visa file, so nothing gets
+                lost between steps. Visit our head office in Rohtak or a branch in {OTHER_BRANCHES}.
+              </p>
+            </div>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {LOCAL.map(([title, text, href], n) => (
+              <li key={title} className="reveal" style={{ "--i": n % 2 } as CSSProperties}>
+                <Link href={href} className="group flex h-full flex-col rounded-xl border border-line bg-paper p-5 transition duration-300 hover:-translate-y-1 hover:border-accent hover:bg-white hover:shadow-lg hover:shadow-brand-dark/5">
+                  <span className="flex items-center justify-between gap-2 font-display text-lg font-semibold text-ink">
+                    {title}<ArrowUpRight className="size-4 shrink-0 text-slate-300 transition group-hover:text-accent" />
+                  </span>
+                  <span className="mt-1 text-sm text-slate-600">{text}</span>
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link href="#counselling" className="group flex h-full flex-col justify-between gap-3 rounded-xl bg-ink p-5 text-white transition hover:bg-accent">
+                <span className="font-display text-lg font-semibold">Not sure which visa you need?</span>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-sun group-hover:text-white">
+                  Free counselling <ArrowRight className="size-4" />
+                </span>
+              </Link>
+            </li>
+          </ul>
         </div>
       </Section>
 
@@ -373,12 +455,11 @@ export default function Home() {
             <NewsletterBox />
             <div className="overflow-hidden rounded-xl border border-line">
               <div className="flex items-center justify-between bg-paper px-5 py-3">
-                <span className="tag text-ink">Visit our office</span>
+                <span className="tag text-ink">Visit us</span>
                 <MapPin className="size-4 text-accent" />
               </div>
               <div className="p-5">
-                <p className="font-semibold text-ink">Rohtak, Haryana</p>
-                <p className="mt-1 text-sm text-slate-600">{SITE.address}</p>
+                <BranchList />
                 <Link href="/contact-us" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline">
                   Directions & contact <ArrowRight className="size-4" />
                 </Link>

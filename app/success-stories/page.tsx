@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import VideoStories from "@/components/VideoStories";
 import WallOfWins from "@/components/WallOfWins";
 import { CtaBand } from "@/components/blocks";
-import { SCORECARDS, VISA_WINS } from "@/content/testimonials";
+import { SCORECARDS, VISA_POSTERS, VISA_WINS } from "@/content/testimonials";
 
 export const metadata: Metadata = {
   title: "Success stories",
-  description: "Western World students with their visas and IELTS results, photographed at our office.",
+  description: "4,000+ study visas and 5,000+ tourist visas: Western World students with their visas, congratulations posters and IELTS results, photographed at our office.",
 };
 
 export default function SuccessStoriesPage() {
@@ -17,9 +17,12 @@ export default function SuccessStoriesPage() {
         <div className="relative mx-auto max-w-7xl px-4">
           <p className="tag text-sun">Success stories</p>
           <h1 className="mt-3 max-w-4xl text-4xl leading-[1.02] font-semibold text-white sm:text-6xl">
-            {VISA_WINS.length} visas and {SCORECARDS.length} scorecards. Every one a real student.
+            4,000+ study visas and 5,000+ tourist visas. Here are {VISA_WINS.length} of them on camera.
           </h1>
-          <p className="mt-5 max-w-2xl text-lg text-white/70">Photographed at our office on the day they collected their passport or got their result.</p>
+          <p className="mt-5 max-w-2xl text-lg text-white/70">
+            Every photo was taken at our office on the day a student collected their passport, plus {VISA_POSTERS.length} congratulations
+            posters and {SCORECARDS.length} IELTS scorecards. Every one a real student.
+          </p>
 
           <div className="mt-12"><WallOfWins /></div>
 

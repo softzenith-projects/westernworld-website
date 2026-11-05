@@ -22,17 +22,37 @@ export const tel = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
 
 export type NavItem = { label: string; href: string; children?: NavItem[] };
 
-/** Study destinations, each with its nearest major airport and a typical flight time from Delhi (for the departures board). */
+/**
+ * Study destinations, each with its nearest major airport and a typical flight time from Delhi (for the departures board).
+ * The owner's list and order (20 Oct 2026); each needs a matching entry in content/countries.json. France is not on the
+ * list: its page (/study-in/france) still exists but is no longer in the menu, board or forms.
+ */
 export const DESTINATIONS = [
-  { slug: "canada", name: "Canada", code: "YYZ", city: "Toronto", flight: "14h 30m" },
   { slug: "uk", name: "UK", code: "LHR", city: "London", flight: "9h 45m" },
-  { slug: "usa", name: "USA", code: "JFK", city: "New York", flight: "15h 30m" },
+  { slug: "canada", name: "Canada", code: "YYZ", city: "Toronto", flight: "14h 30m" },
   { slug: "germany", name: "Germany", code: "FRA", city: "Frankfurt", flight: "8h 40m" },
-  { slug: "france", name: "France", code: "CDG", city: "Paris", flight: "9h 15m" },
-  { slug: "ireland", name: "Ireland", code: "DUB", city: "Dublin", flight: "11h 50m" },
+  { slug: "finland", name: "Finland", code: "HEL", city: "Helsinki", flight: "9h 10m" },
+  { slug: "usa", name: "USA", code: "JFK", city: "New York", flight: "15h 30m" },
   { slug: "new-zealand", name: "New Zealand", code: "AKL", city: "Auckland", flight: "16h 30m" },
+  { slug: "ireland", name: "Ireland", code: "DUB", city: "Dublin", flight: "11h 50m" },
+  { slug: "malta", name: "Malta", code: "MLA", city: "Valletta", flight: "11h 30m" },
   { slug: "singapore", name: "Singapore", code: "SIN", city: "Singapore", flight: "5h 50m" },
+  { slug: "cyprus", name: "Cyprus", code: "LCA", city: "Larnaca", flight: "9h 40m" },
 ] as const;
+
+export type Branch = { name: string; area: string; address?: string; head?: boolean };
+
+/**
+ * Offices (owner, 20 Oct 2026: Rohtak, B'garh, Rohini, Tohana, Dwarka). Only Rohtak's street address is known; add
+ * `address` to the others when the owner sends them (they then show it instead of "call for directions").
+ */
+export const BRANCHES: Branch[] = [
+  { name: "Rohtak", area: "Haryana", address: SITE.address, head: true },
+  { name: "Bahadurgarh", area: "Haryana" },
+  { name: "Rohini", area: "Delhi" },
+  { name: "Tohana", area: "Haryana" },
+  { name: "Dwarka", area: "Delhi" },
+];
 
 /**
  * Main menu. "Services" is a mega menu built from content/services.ts in the header.
