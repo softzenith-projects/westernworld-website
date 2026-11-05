@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero, TestDetails } from "@/components/blocks";
+import { CtaBand, Gallery, PageHero, PracticeBand, TestDetails } from "@/components/blocks";
 import { IELTS_GENERAL_TEST } from "@/content/copy";
 import { media } from "@/lib/content";
 
@@ -17,7 +17,7 @@ export default function ClassroomCoursesPage() {
       <WithCallback source="Request call back (classroom courses)" course="IELTS classroom course">
         <TestDetails test={IELTS_GENERAL_TEST} />
       </WithCallback>
-      <Gallery images={media.galleries.ieltsGeneral} />
+      <PracticeBand tests={["/ielts-academy", "/ielts-general"]} course="IELTS classroom" />      <Gallery images={media.galleries.ieltsGeneral} />
       <CtaBand course="IELTS classroom course" />
     </>
   );

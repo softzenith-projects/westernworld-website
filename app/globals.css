@@ -74,11 +74,6 @@
 }
 
 /* Motion: CSS only, never required to read the page, off for people who ask for less. */
-@keyframes plane {
-  from { left: 0; }
-  to { left: calc(100% - 1.25rem); }
-}
-
 @keyframes flap {
   0% { transform: rotateX(90deg); opacity: 0; }
   100% { transform: rotateX(0); opacity: 1; }
@@ -97,7 +92,197 @@
   animation: marquee 60s linear infinite;
 }
 
+/* Pause a marquee while the pointer is on it (poster reel). */
+.marquee-hover-pause:hover .marquee {
+  animation-play-state: paused;
+}
+
+/* The route (components/JourneyRoute.tsx): a stop's icon wiggles on hover / keyboard focus; the bar under the current
+   stop fills while the tour waits; the detail panel rises in when the stop changes. */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-12deg) scale(1.15); }
+  60% { transform: rotate(9deg) scale(1.15); }
+}
+
+@keyframes timer {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.journey-stop:hover .sign-icon,
+.journey-stop:focus-visible .sign-icon {
+  animation: wiggle 0.6s ease-in-out;
+}
+
+.journey-timer {
+  animation: timer linear forwards;
+}
+
+.journey-detail {
+  animation: rise 0.4s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* Scroll reveal (components/Motion.tsx): `.reveal` below the fold gets `.pending` (hidden), then `.in` (rises in).
+   `backwards` fill, so hover transforms work again once the entrance is over. */
+.reveal.pending:not(.in) {
+  opacity: 0;
+}
+
+.reveal.pending.in {
+  animation: rise 0.6s cubic-bezier(.2,.8,.2,1) backwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+/* FAQ / accordions: the answer slides in when opened. */
+details[open] > :not(summary) {
+  animation: rise 0.35s ease-out backwards;
+}
+
+/* Page heroes (PageHero): a plane flies the dashed arc; the stamp turns slowly; the title rises in on load. */
+@keyframes fly-arc {
+  0% { offset-distance: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+@keyframes turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  50% { transform: translate(-18px, -12px) rotate(-6deg); }
+}
+
+.fly-arc {
+  offset-rotate: auto;
+  animation: fly-arc 9s ease-in-out infinite;
+}
+
+.turn-slow {
+  animation: turn 40s linear infinite;
+}
+
+.drift {
+  animation: drift 7s ease-in-out infinite;
+}
+
+@keyframes fly-line {
+  0% { left: 0; opacity: 0; }
+  10%, 85% { opacity: 1; }
+  100% { left: calc(100% - 1.5rem); opacity: 0; }
+}
+
+.fly-line {
+  animation: fly-line 4s ease-in-out infinite;
+}
+
+.hero-rise {
+  animation: rise 0.7s cubic-bezier(.2,.8,.2,1) backwards;
+}
+
+.hero-rise-2 {
+  animation: rise 0.7s cubic-bezier(.2,.8,.2,1) 0.12s backwards;
+}
+
+/* Card grids (components/CardGrid.tsx): a soft glow under the pointer, and cards rising in one by one (`--i`). */
+.spot-glow {
+  background: radial-gradient(280px circle at var(--x, 50%) var(--y, 0%), rgb(31 111 235 / 0.10), transparent 70%);
+}
+
+[data-reveal="waiting"] > * {
+  opacity: 0;
+}
+
+[data-reveal="shown"] > * {
+  animation: rise 0.55s cubic-bezier(.2,.8,.2,1) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* Illustrations (components/Illustrations.tsx). Loops are slow and small; hovering a scene speeds it up. Transforms
+   on SVG parts use their own box (`fill-box`) unless the part sets a transform-origin in SVG units (view-box). */
+.ill .ill-bubble, .ill .ill-q, .ill .ill-pop, .ill .ill-confetti { transform-box: fill-box; transform-origin: center; }
+
+@keyframes ill-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes ill-turn { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(18deg) translateY(-6px); } }
+@keyframes ill-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes ill-dot { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes ill-steam { 0% { opacity: 0; transform: translateY(4px); } 40% { opacity: 0.9; } 100% { opacity: 0; transform: translateY(-10px); } }
+@keyframes ill-call { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-2deg); } }
+@keyframes ill-typing { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-2px); } 50% { transform: translateY(0); } 75% { transform: translateY(-1.5px); } }
+@keyframes ill-ring { 0%, 60%, 100% { transform: rotate(0); } 64%, 72%, 80% { transform: rotate(-8deg); } 68%, 76% { transform: rotate(8deg); } }
+@keyframes ill-wave { 0% { opacity: 0; } 30% { opacity: 1; } 70%, 100% { opacity: 0; } }
+@keyframes ill-bubble { 0%, 4% { opacity: 0; transform: scale(0.6) translateY(8px); } 10%, 44% { opacity: 1; transform: none; } 50%, 100% { opacity: 0; transform: scale(0.9); } }
+@keyframes ill-spin { to { transform: rotate(360deg); } }
+@keyframes ill-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ill-tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-7deg); } 65% { transform: rotate(6deg); } }
+@keyframes ill-q { 0% { opacity: 0; transform: translateY(10px); } 30% { opacity: 1; } 80%, 100% { opacity: 0; transform: translateY(-22px); } }
+@keyframes ill-type { 0% { transform: scaleX(0); } 40%, 85% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+@keyframes ill-pop { 0%, 55% { opacity: 0; transform: scale(0.4); } 65%, 90% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes ill-confetti { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(310px) rotate(540deg); opacity: 0.6; } }
+@keyframes ill-stamp { 0%, 20% { transform: translateY(0) rotate(0); } 32% { transform: translateY(-14px) rotate(-6deg); } 42%, 52% { transform: translateY(86px) rotate(0); } 66%, 100% { transform: translateY(0); } }
+@keyframes ill-ink { 0%, 42% { opacity: 0; transform: scale(1.25); } 47%, 88% { opacity: 1; transform: rotate(-8deg); } 100% { opacity: 0; transform: rotate(-8deg); } }
+@keyframes ill-takeoff { 0% { opacity: 0; transform: translate(0, 0); } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(70px, -60px); } }
+
+.ill-blink { animation: ill-blink 4.5s infinite; }
+.ill-turn { animation: ill-turn 6s ease-in-out infinite; }
+.ill-twinkle { transform-box: fill-box; transform-origin: center; animation: ill-twinkle 2.4s ease-in-out infinite; }
+.ill-dot { animation: ill-dot 1.2s ease-in-out infinite; }
+.ill-dot.ill-d1 { animation-delay: 0.15s; }
+.ill-dot.ill-d2 { animation-delay: 0.3s; }
+.ill-steam { animation: ill-steam 2.6s ease-out infinite; }
+.ill-steam.ill-d2 { animation-delay: 1.3s; }
+.ill-call { animation: ill-call 3s ease-in-out infinite; }
+.ill-typing { animation: ill-typing 0.9s ease-in-out infinite; }
+.ill-twinkle.ill-d1 { animation-delay: 0.8s; }
+.ill-twinkle.ill-d2 { animation-delay: 1.6s; }
+.ill-ring { animation: ill-ring 2.6s ease-in-out infinite; }
+.ill-wave { animation: ill-wave 1.6s ease-out infinite; }
+.ill-bubble { opacity: 0; animation: ill-bubble 7s ease-in-out infinite; }
+.ill-bubble-2 { animation-delay: 3.5s; }
+.ill-float { animation: ill-float 3s ease-in-out infinite; }
+.ill-tilt { animation: ill-tilt 4s ease-in-out infinite; }
+.ill-q { opacity: 0; animation: ill-q 2.8s ease-out infinite; }
+.ill-type { transform-box: fill-box; transform-origin: left; animation: ill-type 3.6s ease-in-out infinite; }
+.ill-pop { opacity: 0; animation: ill-pop 3.6s ease-out infinite; }
+.ill-hand { animation: ill-spin 3s steps(12) infinite; }
+.ill-confetti { opacity: 0; animation: ill-confetti 3.4s linear infinite; }
+.ill-stamp { animation: ill-stamp 3.2s cubic-bezier(.5,0,.3,1) infinite; }
+.ill-ink { opacity: 0; animation: ill-ink 3.2s ease-out infinite; }
+.ill-takeoff { animation: ill-takeoff 3.2s ease-in infinite; animation-delay: 1.4s; }
+.ill-d1 { animation-delay: 0.3s; }
+.ill-d2 { animation-delay: 0.6s; }
+.ill-d3 { animation-delay: 0.9s; }
+.ill-q.ill-d1 { animation-delay: 0.9s; }
+.ill-q.ill-d2 { animation-delay: 1.8s; }
+.ill-type.ill-d1 { animation-delay: 0.4s; }
+.ill-type.ill-d2 { animation-delay: 0.8s; }
+.ill-c1 { animation-delay: 0.8s; }
+.ill-c2 { animation-delay: 1.6s; }
+.ill-c3 { animation-delay: 2.4s; }
+
+/* Hover: the scene gets livelier. */
+.ill:hover .ill-turn { animation-duration: 2s; }
+.ill:hover .ill-typing { animation-duration: 0.45s; }
+.ill:hover .ill-dot { animation-duration: 0.6s; }
+.ill:hover .ill-ring { animation-duration: 0.9s; }
+.ill:hover .ill-stamp, .ill:hover .ill-ink { animation-duration: 1.8s; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .flap, .marquee, .fly { animation: none !important; }
+  .flap, .marquee, .sign-icon, .journey-timer, .journey-detail, [data-reveal] > *, .reveal, .fly-arc, .fly-line, .turn-slow, .drift,
+  .hero-rise, .hero-rise-2, details[open] > :not(summary) { animation: none !important; }
+  .fly-arc { display: none; }
+  [data-reveal] > * { opacity: 1 !important; }
+  /* Illustrations: still pictures (bubbles, stamp mark and ticks shown, confetti hidden). */
+  .ill * { animation: none !important; }
+  .ill .ill-bubble, .ill .ill-ink, .ill .ill-pop, .ill .ill-q, .ill .ill-takeoff { opacity: 1; }
+  .ill .ill-bubble-2, .ill .ill-confetti { opacity: 0; }
 }

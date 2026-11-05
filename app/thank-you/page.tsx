@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, MessageCircle, Phone, PhoneCall } from "lucide-react";
+import { MessageCircle, Phone, PhoneCall } from "lucide-react";
+import { CallbackScene } from "@/components/Illustrations";
 import { SITE, tel } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Thank you", robots: { index: false } };
@@ -18,10 +19,8 @@ export default async function ThankYouPage({ searchParams }: PageProps<"/thank-y
   return (
     <section className="bg-gradient-to-b from-brand-light to-white">
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-emerald-100">
-          <CheckCircle2 className="size-11 text-emerald-600" />
-        </div>
-        <h1 className="mt-6 text-3xl font-extrabold sm:text-4xl">Thank you{name ? `, ${name}` : ""}!</h1>
+        <CallbackScene className="mx-auto max-w-xs" />
+        <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">Thank you{name ? `, ${name}` : ""}!</h1>
         <p className="mt-4 text-lg text-slate-600">
           We have received your enquiry. Our team will call you shortly.
         </p>

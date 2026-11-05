@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero } from "@/components/blocks";
+import { CtaBand, Gallery, PageHero, PracticeBand } from "@/components/blocks";
 import { media } from "@/lib/content";
 
 export const metadata: Metadata = { title: "IELTS tests for UK Visas and Immigration" };
@@ -18,7 +18,7 @@ export default function UkviIeltsPage() {
           <p className="mt-2 text-slate-700">If you are applying for a Tier 4 Student Visa to enter directly onto a bachelor or postgraduate degree at a university that is a Tier 4 Sponsor, you must meet the English language level set by the institution. All British universities and colleges accept IELTS results. Tier 4 Student Visa applicants can apply to the UK universities listed here with an IELTS result from more than 1,600 IELTS test locations worldwide. Please note that some institutions may have additional requirements.</p>
         </div>
       </WithCallback>
-      <Gallery images={media.galleries.ieltsGeneral} />
+      <PracticeBand tests={["/ukvi-ielts"]} course="UKVI IELTS" />      <Gallery images={media.galleries.ieltsGeneral} />
       <CtaBand course="UKVI-IELTS" />
     </>
   );

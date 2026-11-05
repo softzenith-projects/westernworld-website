@@ -4,7 +4,8 @@ import citiesJson from "@/content/cities.json";
 import mediaJson from "@/content/media.json";
 
 /** Content carried over from the old website (generated from its pages; see README.md). */
-export type Country = { slug: string; name: string; legacyPath: string; universities: number[]; available: boolean };
+/** `legacyPath` is null for destinations the old site did not have. */
+export type Country = { slug: string; name: string; legacyPath: string | null; universities: number[]; available: boolean };
 export type University = {
   uid: number; name: string; title: string; image: string | null; paragraphs: string[]; requirements: string[];
   pageHeading: string; country: string | null; cardTitle?: string; location?: string; blurb?: string;

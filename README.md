@@ -59,13 +59,19 @@ Without a backend the pages work; only form submits fail.
 | Announcement bar (intakes, deadlines) | `content/announcement.ts`: new `id` per announcement, optional `deadline` for the live countdown, `enabled: false` hides it |
 | News & blog posts | `content/posts.ts`: add an object; it appears on the home page, `/blog` and `/blog/<slug>` |
 | Video testimonials | `content/testimonials.ts` → `VIDEO_STORIES`: add the YouTube id |
-| Visa / IELTS result photos | `public/ieltsstu/` + the lists in `content/testimonials.ts` |
-| Which photos lead the home "Wall of wins" | `content/testimonials.ts` → `FEATURED_WINS` (first = the large photo) |
+| Visa photos | JPG (longest side ≤ 1600 px) in `public/wins/` + a line in `content/testimonials.ts` (`MORE`: file, first name, country) |
+| Congratulations posters | `public/wins/posters/` + `VISA_POSTERS` in `content/testimonials.ts` |
+| IELTS scorecards | `public/ieltsstu/` + `SCORECARDS` in `content/testimonials.ts` |
+| Free sample test links (IELTS / PTE / TOEFL / Duolingo) | `PRACTICE` in `content/services.ts` |
+| Which photos lead the home "Wall of wins" | `content/testimonials.ts` → `FEATURED` (first = the large photo) |
 | Logo | `public/images/logo.svg` (header and footer) |
 | Theme colours (blue & white) | `app/globals.css` → `@theme` tokens (`brand`, `accent`, `sun`, `paper`, `line`) |
 | Services | `content/services.ts` (each gets `/services/<slug>`) |
-| Destinations board | `DESTINATIONS` in `lib/site.ts` (needs a matching entry in `content/countries.json`) |
+| Destinations (menu, board, footer, boarding pass) | `DESTINATIONS` in `lib/site.ts` (needs a matching entry in `content/countries.json`) |
 | Phone, email, address, social links | `SITE` in `lib/site.ts` |
+| Branches (contact page, home "Visit us", footer) | `BRANCHES` in `lib/site.ts`: add `address` when known |
+| Home numbers (study visas, results…) | `STATS` in `app/page.tsx` |
+| Route signs (picture per service) | `SIGNS` in `components/journey.tsx` |
 
 Then `npm run lint && npx tsc --noEmit && npm run build`, and deploy.
 
