@@ -1,4 +1,4 @@
-# Handoff — 2026-10-16 (W6: no email/WhatsApp promise; earlier TRUST1)
+# Handoff — 2026-11-05 (W8: Drive photos, new numbers, interactive route, sample tests; earlier W7, W6)
 
 Read `README.md` first (CRM connection, where content lives, git flow). CRM-side rules and history:
 [softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
@@ -16,10 +16,148 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done (on `main`, c1f260e) |
 | TRUST1 | `proxy.ts`: send the visitor's address + shared secret with enquiry calls (CRM `TrustedProxyFilter`); default tenant `westernworldvisaservices` | done (branch `feat/trust1-proxy`, PR #1 into `develop`) |
 | W6 | Thank-you page and form notes no longer promise an email/WhatsApp confirmation (the CRM does not send them yet); thank-you shows call back, WhatsApp chat link, phone | done (branch `fix/thank-you-wording`, stacked on `feat/trust1-proxy`) |
+| W7 | Owner's notes (20 Oct): destinations list + "Other", boarding pass timing / test scores, winding route with picture signs, new numbers, branches, Rohtak SEO phrases | done (branch `feat/client-notes-20oct`, PR into `develop`); logo waits for the owner's file |
+| W8 | Owner's notes (5 Nov): Drive testimonial photos + posters, 4k+ / 5k+ headlines, interactive route icons, free sample test links | done (same branch and PR as W7) |
 | next | Owner copy review → merge `develop` → `main`; hosting (Vercel Pro) + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, `CRM_PROXY_SECRET`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): W6 — no confirmation promise for now (owner, 16 Oct)
+## Session (latest): W8 — Drive photos, headline numbers, interactive stages, sample tests (owner, 5 Nov)
+
+### What I did
+- **Testimonial photos** from the owner's public Drive folder (179 files, ~60 iPhone HEIC). Converted to JPG, longest
+  side 1600 px (posters 1200), EXIF stripped (phone photos can carry GPS), perceptual-hash de-duplicated (HEIC original vs
+  renamed copy, repeated posters). Result: **102 handover photos** in `public/wins/` and **30 "Congratulations" posters**
+  in `public/wins/posters/` (34 MB). 27 of the 33 old `public/ieltsstu/ielts*.jpeg` were lower-resolution copies of
+  these: deleted, and `content/media.json` galleries now point at the new files; ielts5/8/9/25/26/27 stay (not in Drive).
+- `content/testimonials.ts`: `VISA_WINS` / `FEATURED_WINS` are now `{ src, name?, country? }`; first name and country
+  come from the owner's file names ("Ankit Saharan CND" → Ankit · Canada) or that student's poster ("Ashish Pc" + poster
+  "UK visa"). `VISA_POSTERS`, `winLabel`, `winAlt`. Photos without a name show "Visa in hand".
+- **Wall of wins** (`WallOfWins`, `PhotoWall`): tabs Visas in hand (108) / Congratulations posters (30) / IELTS
+  scorecards (19); country filter chips (All · UK 42 · Canada 30 · Germany 1); each photo has a "Name · Country" badge,
+  shown in the lightbox too; per-photo alt text.
+- **Headlines / numbers** (owner: "4k+ satisfied students with student visa, over 5k tourist visa"): `STATS` in
+  `app/page.tsx` now 4000+ students with a study visa, 5000+ tourist visas, 2000+ IELTS / PTE results, countless happy
+  families. New navy band right after the hero, "4,000+ students got their study visa with us. Yours could be next.",
+  with icons and numbers that count up when scrolled into view (`components/CountUp.tsx`; server renders the final
+  number, so no-JS / SEO / reduced motion see it). Hero chip, wall title ("4,000+ happy students. One visa at a time."),
+  why-us badge and `/success-stories` heading use the new numbers.
+- **Poster reel** on home ("Congratulations, you are flying!"): the posters scroll sideways, pause under the pointer.
+- **Interactive stages** (owner: "interactive icons for stages rather than photos"; follow-up the same day: "aggregate
+  all same phase things in 1 box, a bit more interactive"): `components/JourneyRoute.tsx` (client) replaced the winding
+  road. One box per leg (Plan / Prepare / Apply / Fly & settle: icon, blurb, its stops as icon rows); a plane on a track
+  above flies to the active leg; the chosen stop opens a detail panel (what it includes, "Learn more", "Ask about this");
+  prev / next buttons; an "Arrival · Your campus abroad" bar links to free counselling. Large screens: the tour plays by
+  itself (4.5 s a stop, a bar under the stop fills) once the route crosses the middle of the screen, pauses under the
+  pointer or keyboard focus, stops when a stop is chosen, "Play the journey" restarts it. Phones / tablets: no autoplay;
+  the detail opens inside the tapped box. Reduced motion: no autoplay, no animation. Coaching stages (test prep) have
+  icons instead of plain numbers.
+- **Animated illustrations** (owner: "interactive gifs or animations for contact us, like a figure with phone in hand,
+  similarly wherever applicable"): `components/Illustrations.tsx`, inline SVG drawn for this site (no GIFs, no stock
+  art, no new dependency, CSP unchanged), animated by `.ill-*` CSS in `app/globals.css` (livelier on hover; still
+  pictures under reduced motion). Restyled the same day after the owner's flat-illustration reference ("the hands are very weird"): a person in three-quarter view at a desk (chair, long hair, tube sleeves with mitten hands, laptop seen from behind, steaming mug, floating square / circle / twinkles). Scenes: `CallScene` (counsellor at the desk, phone at the ear, typing with the other hand, speech
+  bubbles; contact page, top of the left column with Call / WhatsApp buttons), `CallbackScene` (ringing phone + confetti;
+  thank-you page), `LostScene` (standing, both hands holding a map, question marks; 404), `StudyScene` (headphones, typing, typing-dots bubble, stopwatch; the
+  "Try before you train" band on large screens), and `StampScene` (stamp lands "APPROVED" on a passport; visa assistance).
+- **Services page** (`app/services/page.tsx`, owner: "make them interactive"): an overview of the four legs under the
+  hero (icon, count, the services' icons; jumps to the leg); each leg's sticky column has its icon, "Leg 02 · 2 of 4", a
+  4-step progress bar and "Next leg" link; each card has its service icon and stop number, a glow that follows the
+  pointer and a lift on hover (`components/CardGrid.tsx`, client), its "What you get" list (first 3 `includes`, always
+  shown so nothing jumps; comes into focus on hover) and "Ask about this" (form, pre-filled). The whole card links to the
+  service page. Cards rise in one by one when scrolled into view. Service / leg icons now live in
+  `components/serviceIcons.ts` (`ServiceIcon`, `LegIcon`), shared with the route.
+- **Site-wide playfulness** (owner: "find similar opportunities across other pages, as interactive and playful as you
+  can"):
+  - `components/Motion.tsx` (client, in the sticky header, `app/layout.tsx`): a scroll-progress line under the header
+    with a small plane at its tip; scroll reveal for any `.reveal` element below the fold (`--i` staggers; on-screen
+    elements, no-JS and reduced motion are simply shown; re-run on each navigation and safe on a re-run).
+  - `components/blocks.tsx`: `PageHero` (every inner page) has a plane flying a dashed arc (CSS `offset-path`) past a
+    slowly turning "WWVS" stamp, title / subtitle rise in; `SectionTitle`, `Feature`, `TestDetails` cards and
+    `SampleTests` cards rise in and react on hover; `Packages` are tickets (notches, cursor glow via `CardGrid`, lift,
+    pulsing "Most chosen"); `CtaBand` has a dashed flight path and a drifting plane.
+  - Service pages: a strip of all 14 stops under the hero (this one lit, earlier ones blue, each links to its service),
+    "Stop 05 of 14" in the hero label, the service icon beside the intro, "How it works" with icons and a dashed
+    connector, related services with icons, previous / next stop.
+  - Country pages: a "DEL → LHR" boarding strip under the hero (plane crossing a dashed line, flight time,
+    universities, "Board here: free counselling"); university cards rise in, lift, zoom the photo.
+  - University pages: `components/DocChecklist.tsx`, the requirements as a tick list with a progress bar ("3 of 5
+    ready") and "Book a file check" when all are ticked (nothing is saved or sent).
+  - About: the numbers band (now `components/NumbersBand.tsx`, numbers in `content/stats.ts`, shared with home) and
+    badges that rise in. Footer: "Fly back to top", destination links nudge. Blog cards lift; the plane on text covers
+    takes off on hover. FAQ answers slide open. City pages, visa destinations (globe spins), "We also coach for" chips.
+  - Checked: 12 page types at 1440 / 390 px, no console errors (except the existing missing
+    `/university/lancaster-university.jpg`, 400), no horizontal overflow, no element left hidden after scrolling,
+    progress reaches 1, checklist reaches "5 of 5" and shows the banner.
+- **Sample tests** (owner: "sample tests / IELTS / TOEFL link to cover courses"): `PRACTICE` + `testAt` in
+  `content/services.ts` (official free material, URLs checked 5 Nov: IELTS.org Academic / General Training sample
+  questions, Pearson PTE "Prepare for free" section, ETS TOEFL iBT free sample test page, Duolingo practice test).
+  Home test prep is now `SampleTests` (each test: our course + free sample test); `PracticeBand` ("Try before you
+  train" + book a free trial class) on IELTS Academy / General / UKVI, PTE, TOEFL, online / classroom courses, IELTS /
+  PTE classes and every city page; the English-test service page's "Pick your test" rows have a sample test link.
+  External links open in a new tab (no CSP change needed).
+
+### Assumptions to confirm with the owner
+- **Student first names** are shown on photos (from the owner's file names; the posters already show full names).
+  Remove `name` from the rows in `content/testimonials.ts` if they should not appear.
+- Countries guessed from the poster of the same name for "Pc" / "Pic" / "R" files; unknown ones say "Visa in hand".
+- 4000+ / 5000+ replace 500+ / 1000+ from 20 Oct. Headline lines ("Yours could be next", "Holidays, family visits and
+  graduations", "Proud parents at every airport goodbye") are mine. No "free mock test" promised; links offer the free
+  trial class the FAQ already offers.
+- "More reference images to make the website interactive": no images came with the note; waiting for them.
+
+### Verification
+- `npm run lint`, `npx tsc --noEmit`, `npm run build` (255 pages): pass.
+- Playwright on `next start` at 1440 / 1024 / 390 px over home, success stories, IELTS Academy, TOEFL, PTE, English test
+  service page, IELTS classes: no console errors, no horizontal overflow. Count-up ends at 4,000+ / 5,000+ / 2,000+;
+  Canada filter shows 30 photos with labels; lightbox caption; posters tab; route reveal ("shown"), Apply leg highlight
+  + hover note; practice links resolve to the official pages. Phase boxes (follow-up): tour advances at 1440 / 1024 px, not at 390 px; picking Scholarships opens its detail and stops the tour; next button; no overflow. Screenshots checked (numbers band fixed on phones).
+
+## Session: W7 — owner's handwritten notes (20 Oct)
+
+### What I did
+- **Destinations** (`DESTINATIONS`, `lib/site.ts`): the owner's list and order: UK, Canada, Germany, Finland, USA, New
+  Zealand, Ireland, Malta, Singapore, Cyprus. Finland, Malta and Cyprus are new in `content/countries.json` (no
+  universities yet, so their pages show an enquiry form; `legacyPath: null`). France is off the menu, board, footer and
+  form (not on the owner's list); `/study-in/france` and its old URL still work. Footer code strip is built from the list.
+- **Boarding pass** (`components/BoardingPass.tsx`): "To" has "Other country", which shows a required "Which country?"
+  box (the big code shows its first 3 letters). "Planning to fly": As early as possible / Within 3 months / In 3–6
+  months / Not sure yet. "English test: Have my score" opens a panel: IELTS / PTE / Duolingo / Other (+ required test
+  name) and optional L / R / W / S / Overall boxes, checked against each test's scale (`checkScore`, `checkOther` in
+  `lib/validation.ts`). The CRM gets it in `message`, e.g. `English test: Have my score (PTE)` +
+  `Scores: Listening 79 · Reading 72 · …`; `preferredCountry` is the typed country for "Other".
+- **The route** (`JourneyRoute`, `components/journey.tsx`): the owner's sketch, a road winding left→right, U-turn,
+  right→left… through the 14 services (rows of 5) to "Your campus abroad", each stop a blue road sign with a picture
+  (lucide icon per service in `SIGNS`). Phones/tablets: one road down the page. Old `plane` keyframes / `.fly` removed.
+- **Numbers** (home `STATS`): 500+ study visas, 2000+ IELTS / PTE results, 1000+ tourist visas, countless happy
+  families (2 × 2 grid). "500+ study visas" also replaces "2000+ enrolled students" in the wall-of-wins strip and the
+  why-us badge.
+- **Branches** (`BRANCHES`, `lib/site.ts`): Rohtak (head office, address known), Bahadurgarh, Rohini, Tohana, Dwarka.
+  `BranchList` (`components/blocks.tsx`) on the contact page and the home "Visit us" card; footer line "Branches: …".
+  Branches without an address show as town chips with "call for directions"; adding `address` shows it in full.
+- **SEO phrases** (visa agent / visa consultant / IELTS coaching / PTE coaching in Rohtak, UK / Canada / Europe visa):
+  default title + description + keywords (`app/layout.tsx`); hero tag; new home section "Your visa consultant in
+  Rohtak" (`#rohtak`, cards link to the pages below); `/visa-assistance` title, description and UK / Canada / Europe
+  visa cards (`#uk-visa`, `#canada-visa`, `#europe-visa`); `/ielts-academy` and `/pte` titles, descriptions, subtitles.
+- Copy is mine and needs the owner's review (no guarantees; "visitor visas" because the owner counts tourist visas).
+
+### Assumptions to confirm with the owner
+- "B'G" = Bahadurgarh. "1000+" tourist visas (the first digit is overwritten in the note). Dropping France.
+- Flight times for Helsinki (9h 10m), Malta (11h 30m, 1 stop) and Larnaca (9h 40m, 1 stop) are estimates.
+- Australia is not on the owner's destination list, although the announcement bar and news post are about Australia.
+
+### Not done (needs the owner)
+- **Logo change**: no new logo file yet. Replace `public/images/logo.svg` (header + footer) when it arrives.
+- **More visa / result photos, office photos**: done in W8 for visa photos (Drive folder); office photos have no slot yet.
+- **Branch street addresses** for Bahadurgarh, Rohini, Tohana, Dwarka (`BRANCHES[].address`).
+
+### Verification
+- `npm run lint`, `npx tsc --noEmit`, `npm run build` (255 pages): pass.
+- Playwright on `next start` at 1440 / 1024 / 390 px: no horizontal overflow, no console errors; "Other" country +
+  PTE scores submitted (CRM call intercepted): payload above, lands on `/thank-you`; out-of-range score, empty "Other"
+  country and empty test name show their messages. Screenshots checked: route (all widths), form, Rohtak section,
+  contact offices card, footer.
+- Not verified: a live submit to the CRM (backend not running).
+
+## Session: W6 — no confirmation promise for now (owner, 16 Oct)
 
 ### What I did
 - The CRM staging server keeps student emails in a test inbox and WhatsApp is not connected, so the site stopped

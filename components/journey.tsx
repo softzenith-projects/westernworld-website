@@ -1,49 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight, Plane } from "lucide-react";
-import { LEGS, serviceHref } from "@/content/services";
+import { Plane } from "lucide-react";
 import { country, universitiesOf } from "@/lib/content";
 import { DESTINATIONS } from "@/lib/site";
-
-/** All services as one route: four legs, numbered stops. */
-/** Stop number of each service along the whole route (01, 02, …). */
-const STOP = new Map(LEGS.flatMap((l) => l.services).map((s, i) => [s.slug, String(i + 1).padStart(2, "0")]));
-
-export function JourneyRoute() {
-  return (
-    <div className="relative">
-      {/* Flight path across the legs (desktop). */}
-      <div className="absolute top-[2.15rem] right-[12%] left-[12%] hidden lg:block" aria-hidden>
-        <div className="border-t-2 border-dashed border-ink/20" />
-        <Plane className="fly absolute -top-[11px] size-5 rotate-45 text-accent [animation:plane_14s_ease-in-out_infinite_alternate]" />
-      </div>
-      <ol className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-        {LEGS.map((leg) => (
-          <li key={leg.id} className="relative flex flex-col">
-            <div className="relative z-10 mx-auto mb-5 hidden size-[4.3rem] items-center justify-center rounded-full border-2 border-ink bg-paper font-mono text-sm font-medium text-ink lg:flex">
-              {leg.label.replace("Leg ", "")}
-            </div>
-            <div className="flex flex-1 flex-col rounded-xl border border-line bg-white p-6">
-              <p className="tag text-accent">{leg.label}</p>
-              <h3 className="mt-1 text-3xl font-semibold">{leg.title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{leg.blurb}</p>
-              <ul className="mt-5 flex-1 divide-y divide-dashed divide-line border-t border-dashed border-line">
-                {leg.services.map((s) => (
-                    <li key={s.slug}>
-                      <Link href={serviceHref(s)} className="group flex items-baseline gap-3 py-2.5">
-                        <span className="font-mono text-[11px] text-slate-400">{STOP.get(s.slug)}</span>
-                        <span className="flex-1 font-medium text-ink transition group-hover:text-accent">{s.name}</span>
-                        <ArrowUpRight className="size-4 shrink-0 self-center text-slate-300 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent" />
-                      </Link>
-                    </li>
-                ))}
-              </ul>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-}
 
 /** Study destinations as an airport departures board. */
 export function DeparturesBoard() {

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero } from "@/components/blocks";
+import { CtaBand, Gallery, PageHero, PracticeBand } from "@/components/blocks";
 import { media } from "@/lib/content";
 
 export const metadata: Metadata = { title: "TOEFL Preparation Specialization" };
@@ -18,7 +18,7 @@ export default function ToeflPage() {
           <p className="mt-2 text-slate-700">There are no specific eligibility criteria for the TOEFL iBT exam as it is an English language proficiency test and any person who wants to study, work or immigrate abroad can take the TOEFL exam. That being said, the applicant must meet the institute-specific TOEFL eligibility criteria or minimum section-wise or overall marks in TOEFL as mandated by the institute applied for admission.</p>
         </div>
       </WithCallback>
-      <Gallery images={media.galleries.toefl} title="Student Gallery" />
+      <PracticeBand tests={["/toefl"]} course="TOEFL" />      <Gallery images={media.galleries.toefl} title="Student Gallery" />
       <CtaBand course="TOEFL" />
     </>
   );

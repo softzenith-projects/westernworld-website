@@ -14,7 +14,7 @@ export function PostCover({ p, className = "", sizes, compact = false }: { p: Po
           <div className="map-grid absolute inset-0 opacity-25 [filter:invert(1)]" aria-hidden />
           <span className={`tag relative text-white/50 ${compact ? "" : "self-end"}`}>{compact ? (p.kind === "News" ? "News" : "Guide") : `${p.kind === "News" ? "Bulletin" : "Guide"}${p.date ? ` · ${p.date.slice(0, 4)}` : ""}`}</span>
           <span className={`relative font-display leading-none font-semibold break-words text-white ${compact ? "text-lg" : "text-4xl sm:text-5xl"}`}>{p.tag}</span>
-          <span className="pointer-events-none absolute -right-4 -bottom-8 font-display text-[9rem] leading-none text-white/[0.06] select-none" aria-hidden>✈</span>
+          <span className="pointer-events-none absolute -right-4 -bottom-8 font-display text-[9rem] leading-none text-white/[0.06] transition duration-700 select-none group-hover:-translate-y-4 group-hover:translate-x-2 group-hover:text-white/[0.12]" aria-hidden>✈</span>
         </div>
       )}
       {!compact && <span className={`tag absolute top-3 left-3 rounded-full px-2.5 py-1 ${p.kind === "News" ? "bg-sun text-ink" : "bg-white text-ink"}`}>{p.kind}</span>}
@@ -35,7 +35,7 @@ export function PostMeta({ p, light = false }: { p: Post; light?: boolean }) {
 export function PostCard({ p, featured = false }: { p: Post; featured?: boolean }) {
   return (
     <Link href={`/blog/${p.slug}`}
-          className={`group flex h-full overflow-hidden rounded-xl border border-line bg-white transition hover:border-ink hover:shadow-xl hover:shadow-brand-dark/5 ${featured ? "flex-col md:flex-row" : "flex-col"}`}>
+          className={`reveal group flex h-full overflow-hidden rounded-xl border border-line bg-white transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-xl hover:shadow-brand-dark/10 ${featured ? "flex-col md:flex-row" : "flex-col"}`}>
       <PostCover p={p} className={featured ? "aspect-[16/10] md:aspect-auto md:w-1/2" : "aspect-[16/10]"}
                  sizes={featured ? "(min-width: 768px) 40vw, 100vw" : "(min-width: 1024px) 25vw, 100vw"} />
       <div className={`flex flex-1 flex-col ${featured ? "p-6 md:p-8" : "p-5"}`}>

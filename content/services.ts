@@ -237,12 +237,28 @@ export const service = (slug: string) => SERVICES.find((s) => s.slug === slug);
 
 export const serviceHref = (s: Service) => s.href ?? `/services/${s.slug}`;
 
+/** Free official practice material, linked from the test-prep section and each test's page (checked 5 Nov 2026). */
+export type Practice = { label: string; by: string; url: string };
+
+const PRACTICE = {
+  ieltsAcademic: { label: "IELTS Academic sample test questions", by: "IELTS.org", url: "https://ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test" },
+  ieltsGeneral: { label: "IELTS General Training sample test questions", by: "IELTS.org", url: "https://ielts.org/take-a-test/preparation-resources/sample-test-questions/general-training-test" },
+  pte: { label: "Free PTE practice with Smart Prep", by: "Pearson PTE", url: "https://www.pearsonpte.com/pte-academic/preparation#free" },
+  toefl: { label: "TOEFL iBT free sample test", by: "ETS", url: "https://www.ets.org/toefl/test-takers/ibt/prepare.html" },
+  duolingo: { label: "Duolingo English Test free practice test", by: "Duolingo", url: "https://englishtest.duolingo.com/practice" },
+} satisfies Record<string, Practice>;
+
+export type Test = { name: string; note: string; href: string; practice: Practice };
+
 /** English tests covered by "IELTS, PTE, TOEFL & Duolingo Preparation" (Duolingo has no page of its own yet). */
-export const TESTS = [
-  { name: "IELTS Academic", note: "Universities and colleges", href: "/ielts-academy" },
-  { name: "IELTS General", note: "Work and migration", href: "/ielts-general" },
-  { name: "UKVI IELTS", note: "UK visa applications", href: "/ukvi-ielts" },
-  { name: "PTE Academic", note: "Computer-based, fast results", href: "/pte" },
-  { name: "TOEFL iBT", note: "Popular with US universities", href: "/toefl" },
-  { name: "Duolingo English Test", note: "Online, at home, about an hour", href: "/services/english-test-preparation#duolingo" },
+export const TESTS: Test[] = [
+  { name: "IELTS Academic", note: "Universities and colleges", href: "/ielts-academy", practice: PRACTICE.ieltsAcademic },
+  { name: "IELTS General", note: "Work and migration", href: "/ielts-general", practice: PRACTICE.ieltsGeneral },
+  { name: "UKVI IELTS", note: "UK visa applications", href: "/ukvi-ielts", practice: PRACTICE.ieltsAcademic },
+  { name: "PTE Academic", note: "Computer-based, fast results", href: "/pte", practice: PRACTICE.pte },
+  { name: "TOEFL iBT", note: "Popular with US universities", href: "/toefl", practice: PRACTICE.toefl },
+  { name: "Duolingo English Test", note: "Online, at home, about an hour", href: "/services/english-test-preparation#duolingo", practice: PRACTICE.duolingo },
 ];
+
+/** The test whose page is `href` (for the "Try a free sample test" card on test pages). */
+export const testAt = (href: string) => TESTS.find((t) => t.href === href);

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CtaBand, Gallery, PageHero, Packages, Section, SectionTitle } from "@/components/blocks";
+import { CtaBand, Gallery, Packages, PageHero, PracticeBand, Section, SectionTitle } from "@/components/blocks";
 import { IELTS_ACADEMIC_BLURB, IELTS_GENERAL_BLURB, ONLINE_PACKAGES } from "@/content/copy";
 import { media } from "@/lib/content";
 
@@ -29,7 +29,7 @@ export default function OnlineCoursesPage() {
           ))}
         </div>
       </Section>
-      <Gallery images={media.galleries.ieltsGeneral} />
+      <PracticeBand tests={["/ielts-academy", "/ielts-general"]} course="IELTS online" />      <Gallery images={media.galleries.ieltsGeneral} />
       <CtaBand course="IELTS online course" />
     </>
   );

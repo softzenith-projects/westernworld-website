@@ -110,5 +110,26 @@
    89
   ],
   "available": true
+ },
+ {
+  "slug": "finland",
+  "name": "Finland",
+  "legacyPath": null,
+  "universities": [],
+  "available": true
+ },
+ {
+  "slug": "malta",
+  "name": "Malta",
+  "legacyPath": null,
+  "universities": [],
+  "available": true
+ },
+ {
+  "slug": "cyprus",
+  "name": "Cyprus",
+  "legacyPath": null,
+  "universities": [],
+  "available": true
  }
 ]

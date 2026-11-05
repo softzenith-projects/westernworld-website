@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, Building2, Mail, MapPin, Phone, Plane } from "lucide-react";
 import SocialIcons from "@/components/SocialIcons";
 import { LEGS, serviceHref } from "@/content/services";
-import { DESTINATIONS, FOOTER_LINKS, NAV, SITE, enquire, tel } from "@/lib/site";
+import { BRANCHES, DESTINATIONS, FOOTER_LINKS, NAV, SITE, enquire, tel } from "@/lib/site";
 
 export default function Footer() {
   const tests = NAV.find((n) => n.label === "Test prep")?.children ?? [];
@@ -18,8 +18,8 @@ export default function Footer() {
             Your seat abroad is waiting. <span className="text-sky">Let&rsquo;s book it.</span>
           </p>
           <Link href={enquire("Free counselling")}
-                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-white transition hover:bg-white hover:text-accent">
-            Book free counselling <ArrowUpRight className="size-5" />
+                className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-white transition hover:bg-white hover:text-accent">
+            Book free counselling <ArrowUpRight className="size-5 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
         </div>
 
@@ -31,6 +31,10 @@ export default function Footer() {
             <p className="max-w-xs text-sm leading-relaxed">{SITE.footerAbout}</p>
             <ul className="space-y-2.5 text-sm">
               <li className="flex gap-3"><MapPin className="mt-0.5 size-4 shrink-0 text-accent" />{SITE.address}</li>
+              <li className="flex gap-3">
+                <Building2 className="mt-0.5 size-4 shrink-0 text-accent" />
+                <span>Branches: {BRANCHES.filter((b) => !b.head).map((b) => b.name).join(" · ")}</span>
+              </li>
               {SITE.phones.map((p) => (
                 <li key={p}><a href={tel(p)} className="flex gap-3 hover:text-white"><Phone className="size-4 shrink-0 text-accent" />{p}</a></li>
               ))}
@@ -51,8 +55,9 @@ export default function Footer() {
             <ul className="space-y-2">
               {DESTINATIONS.map((d) => (
                 <li key={d.slug}>
-                  <Link href={`/study-in/${d.slug}`} className={`${link} flex items-baseline gap-2`}>
-                    <span className="font-mono text-[11px] text-sky">{d.code}</span> Study in {d.name}
+                  <Link href={`/study-in/${d.slug}`} className={`${link} group flex items-baseline gap-2`}>
+                    <span className="font-mono text-[11px] text-sky transition group-hover:text-white">{d.code}</span>
+                    <span className="transition group-hover:translate-x-1">Study in {d.name}</span>
                   </Link>
                 </li>
               ))}
@@ -76,7 +81,13 @@ export default function Footer() {
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-white/45">
           <p>© 2021 {SITE.legalName} All Rights Reserved.</p>
-          <p className="tag">DEL · ROH → YYZ · LHR · JFK · FRA · CDG · DUB · AKL · SIN</p>
+          <p className="tag">DEL · ROH → {DESTINATIONS.map((d) => d.code).join(" · ")}</p>
+          <a href="#main" className="group tag inline-flex items-center gap-2 text-white/60 transition hover:text-white">
+            Fly back to top
+            <span className="flex size-7 items-center justify-center rounded-full bg-white/10 transition duration-500 group-hover:-translate-y-1 group-hover:bg-accent">
+              <Plane className="size-3.5 -rotate-45 transition duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </span>
+          </a>
         </div>
       </div>
     </footer>

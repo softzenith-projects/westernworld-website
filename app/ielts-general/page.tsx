@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import WithCallback from "@/components/WithCallback";
-import { CtaBand, Gallery, PageHero, Packages, Section, SectionTitle, TestDetails } from "@/components/blocks";
+import { CtaBand, Gallery, Packages, PageHero, PracticeBand, Section, SectionTitle, TestDetails } from "@/components/blocks";
 import { IELTS_GENERAL_PACKAGES, IELTS_GENERAL_TEST } from "@/content/copy";
 import { media } from "@/lib/content";
 
@@ -22,7 +22,7 @@ export default function IeltsGeneralPage() {
         <SectionTitle eyebrow="IELTS test" title="About the IELTS General test" />
         <TestDetails test={IELTS_GENERAL_TEST} />
       </WithCallback>
-      <Gallery images={media.galleries.ieltsGeneral} />
+      <PracticeBand tests={["/ielts-general", "/ielts-academy"]} course="IELTS General" />      <Gallery images={media.galleries.ieltsGeneral} />
       <CtaBand course="IELTS General" />
     </>
   );

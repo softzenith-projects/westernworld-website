@@ -79,6 +79,28 @@ export function checkCourse(raw: string) {
   return tidy(raw) ? "" : "Which course or country interests you? A rough idea is perfectly fine.";
 }
 
+/** An "Other" choice: the visitor types what they mean (e.g. a country that is not in the list). */
+export const checkOther = (what: string, example: string) => (raw: string) =>
+  tidy(raw) ? "" : `Which ${what}? Type its name, e.g. ${example}.`;
+
+/** Valid scores per English test (official scales). Tests not listed here ("Other") are only checked for digits. */
+const SCORE_SCALES: Record<string, { min: number; max: number; step: number; hint: string }> = {
+  IELTS: { min: 0, max: 9, step: 0.5, hint: "0 to 9, in steps of 0.5 (e.g. 6.5)" },
+  PTE: { min: 10, max: 90, step: 1, hint: "10 to 90 (e.g. 65)" },
+  Duolingo: { min: 10, max: 160, step: 5, hint: "10 to 160, in steps of 5 (e.g. 115)" },
+};
+
+/** One optional score box ("Listening", "Overall"…) for the given test. */
+export function checkScore(raw: string, test: string, part: string) {
+  const v = raw.trim().replace(",", ".");
+  if (!v) return "";
+  if (!/^\d+(\.\d+)?$/.test(v)) return `${part}: numbers only, please (e.g. 6.5).`;
+  const s = SCORE_SCALES[test];
+  const n = Number(v);
+  if (s && (n < s.min || n > s.max || (n - s.min) % s.step !== 0)) return `${part}: ${test} scores run from ${s.hint}.`;
+  return "";
+}
+
 export type FormField = "name" | "email" | "mobile";
 
 const SERVER_FIELDS: [RegExp, FormField, string][] = [

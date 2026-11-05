@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import Header from "@/components/Header";
+import Motion from "@/components/Motion";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
 import { SITE } from "@/lib/site";
@@ -16,14 +17,20 @@ export const viewport: Viewport = { themeColor: "#0e1645" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: "Western World Visa Services | Study Abroad Consultant in Rohtak", template: "%s | Western World Visa Services" },
+  title: {
+    default: "Visa Consultant in Rohtak | IELTS & PTE Coaching | Western World Visa Services",
+    template: "%s | Western World Visa Services",
+  },
   description:
-    "Career counselling, university applications, IELTS / PTE / TOEFL / Duolingo coaching, SOPs, scholarships, education loans, visas, forex, flights and accommodation: every step of studying abroad under one roof.",
+    "Visa agent and visa consultant in Rohtak for UK visa, Canada visa and Europe visa, with IELTS coaching and PTE coaching in Rohtak. Counselling, applications, SOPs, scholarships, loans, forex, flights and accommodation under one roof.",
   keywords: [
+    // The owner's search phrases (20 Oct 2026) first.
+    "visa agent in Rohtak", "visa consultant in Rohtak", "IELTS coaching in Rohtak", "PTE coaching in Rohtak",
+    "UK visa", "Canada visa", "Europe visa",
     "Study Abroad", "Study in Canada", "Study in U.K", "Study in U.S.A", "Study in Australia", "Career in Abroad",
     "Study Abroad Programs", "Overseas Education in UK", "Overseas Education in Canada", "Overseas Education in USA",
     "Study Abroad Consultant", "Overseas Education Consultant", "MBA From Abroad", "Overseas Consultant",
-    "Study Abroad after 12th", "List of Courses in Abroad", "IELTS coaching Rohtak", "PTE coaching Rohtak",
+    "Study Abroad after 12th", "List of Courses in Abroad",
   ],
   openGraph: { type: "website", siteName: SITE.name, images: ["/images/w4.jpg"] },
 };
@@ -39,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <div className="sticky top-0 z-40">
           <AnnouncementBar />
           <Header />
+          <Motion />
         </div>
         <main id="main" className="flex-1">{children}</main>
         <Footer />
