@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const fmt = (n: number) => n.toLocaleString("en-IN");
 
 /**
- * A number that counts up from 0 when it scrolls into view ("4,000+"). The server renders the final number, so it reads
+ * A number that counts up from 0 when it scrolls into view ("5,000+"). The server renders the final number, so it reads
  * correctly without JavaScript, to search engines and with reduced motion; a number already on screen when the page
  * loads does not count (no flash).
  */

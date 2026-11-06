@@ -1,4 +1,4 @@
-# Handoff — 2026-11-05 (W8: Drive photos, new numbers, interactive route, sample tests; earlier W7, W6)
+# Handoff — 2026-11-06 (W10: student photos in one place + destination photo cards; earlier W9, W8, W7)
 
 Read `README.md` first (CRM connection, where content lives, git flow). CRM-side rules and history:
 [softzenith-projects/softzenith-crm](https://github.com/softzenith-projects/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
@@ -18,10 +18,96 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W6 | Thank-you page and form notes no longer promise an email/WhatsApp confirmation (the CRM does not send them yet); thank-you shows call back, WhatsApp chat link, phone | done (branch `fix/thank-you-wording`, stacked on `feat/trust1-proxy`) |
 | W7 | Owner's notes (20 Oct): destinations list + "Other", boarding pass timing / test scores, winding route with picture signs, new numbers, branches, Rohtak SEO phrases | done (branch `feat/client-notes-20oct`, PR into `develop`); logo waits for the owner's file |
 | W8 | Owner's notes (5 Nov): Drive testimonial photos + posters, 4k+ / 5k+ headlines, interactive route icons, free sample test links | done (same branch and PR as W7) |
+| W9 | Owner's promo (6 Nov): popup on landing (their artwork + the real form with "Other" → type it; × / Esc / outside click; quiet 7 days after closing or sending), same artwork replaces the home hero headline; stricter "Other" check site-wide | done, uncommitted; branch `feat/enquiry-page` (stacked on `feat/client-notes-20oct`) |
+| W10 | Premium refresh tried and reverted (owner: back to the W9 design), keeping only the destination photo cards; home shows student photos in one place (3 cards) | done, uncommitted; same branch `feat/enquiry-page` |
 | next | Owner copy review → merge `develop` → `main`; hosting (Vercel Pro) + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, `CRM_PROXY_SECRET`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): W8 — Drive photos, headline numbers, interactive stages, sample tests (owner, 5 Nov)
+## Session (latest): W10 — student photos in one place, destination photo cards (owner, 6 Nov)
+
+### What happened
+- A full premium redesign (new heading font, timeline, services overview, new header / footer / phone bar…) was built,
+  then **reverted at the owner's request**: the site is back to the W9 design. A copy of that redesign is outside the
+  repo (session scratchpad), not needed unless the owner asks for parts of it again.
+- **Kept from it, owner's choice: the destination photo cards** (`components/Destinations.tsx`, "Where will you study
+  next?"), replacing the departures board (`components/journey.tsx` deleted, its `.flap` CSS removed). Photos:
+  `public/images/destinations/<slug>.jpg`, 10 Unsplash photos (Unsplash License: free use, no credit required;
+  ≤ 1200 px, metadata stripped); `photo` / `scene` (alt text) per destination in `DESTINATIONS` (`lib/site.ts`), with
+  the photographers listed there.
+- **Student photos in one place on the home page** (owner, with a Figma reference: "photos at only 1 place"): the wall
+  of wins is now three cards (first three of `FEATURED` in `content/testimonials.ts`: photo, first name, country,
+  "Visa approved") and a link to `/success-stories` for all photos, posters and scorecards. Removed from home: the
+  poster reel, the photo beside "Where to?" and the photo + 5,000+ badge beside "Why us?". On phones the three cards
+  are a swipeable row. `/success-stories` is unchanged (full wall).
+- Hero: "we can help.", its underline swoosh and "today!" are now theme blue (`accent`) instead of the logo red
+  (owner, 6 Nov). Red (`flame`) remains only on the popup form's required-field asterisks and its close button hover.
+- Hero headline now says what we do (owner: "Tell us how we can help" alone did not): pill "Study visa consultant ·
+  IELTS & PTE coaching · Rohtak", h1 "Study in the UK, Canada or Europe. We guide every step.", a line listing the
+  services; "Tell us how we can help. It takes under a minute." now leads into the promo's three steps. Copy is ours:
+  owner to review. Promo popup unchanged (still opens 2.5 s after landing; quiet 7 days after closing or sending).
+- **Numbers once** (owner, 6 Nov): the four numbers (`STATS`) are now a navy strip at the foot of the hero, under the
+  form (`NumbersStrip` in `components/NumbersBand.tsx`; numbers stacked under their icons so "Countless" fits at
+  360 / 1024 px). Removed from home: the promo's 3-item trust band (Trusted counsellors / 5,000+ students guided / High
+  visa success rate, with the yellow sweep), the separate navy numbers band, the "Why us?" stats grid, and the number
+  in the photos heading (now "Success stories · Real students. Real visas."). About page still uses the full band.
+- **Soft photos fixed** (owner: "low quality pics on home page"). The files were never changed (`public/wins/` is as
+  committed); the `sizes` hints were too small, so browsers fetched small versions and stretched them: student photos
+  are landscape but cropped into 4:5 cards (drawn ~1.45x wider than the card), and the two-column Singapore / Cyprus
+  cards were sized as one column. New per-card `sizes` (`SIZES` in `components/Destinations.tsx`, student cards in
+  `app/page.tsx`), quality 85 for those photos (`images.qualities: [75, 85]` in `next.config.ts`, needed in Next 16),
+  and the large UK card's photo re-saved at 1280 x 1600 (it was 960 wide). Measured: every one of the 13 home photos
+  gets at least the pixels it is drawn at, at 1x / 1.25x / 1.5x / 2x desktop and 3x phone.
+- Note: `next dev` (port 3100) had left `.next/dev/types/routes.d.ts` and `validator.ts` half-written, which broke
+  `tsc` and `next build`; deleted those two generated files and they were regenerated.
+
+### Assumptions to confirm with the owner
+- Which three students lead (now Aman · UK, Nikita · Canada, Armann · Germany): reorder `FEATURED` to change.
+- Ireland's photo licence was read from the Unsplash search listing (no Unsplash+ marker), not its own page.
+
+### Verification
+- `npm run lint`, `npx tsc --noEmit`, `npm run build` (255 pages): pass.
+- Playwright on `next start`: home at 360 / 375 / 393 / 768 / 1024 / 1440 / 1920 px, no horizontal overflow, clipped
+  text or console errors; screenshots checked at 1440 and 375. Boarding pass: empty submit shows errors and sends
+  nothing; valid submit (CRM reply mocked) lands on `/thank-you` with `+919876543210`, `preferredCountry: Canada`,
+  scores and source "Boarding pass (home)". 27 routes (incl. old `.php` redirects, a 404) answer as expected.
+
+## Session: W9 — promo popup and promo artwork on the home page (owner, 6 Nov)
+
+### What I did
+- Owner's promo image (1600×900, sent in chat) cut into `public/images/promo/promo-popup.jpg` (left part, logo to
+  trust band). Metadata stripped.
+- `components/PromoPopup.tsx` (in `app/layout.tsx`, every page): opens 2.5 s after landing; native `<dialog>` (focus
+  kept inside, Esc / × / click outside close it). Closing or sending stores `ww-promo-closed` in localStorage: no popup
+  for 7 days. Never on `/thank-you`; sending from it lands there and closes it. Artwork left (flags above it), form right.
+- `components/ConsultationForm.tsx`: Full Name *, Mobile *, Email, Interested In, Preferred Country, Message (the
+  mock-up's fields). "Other" in either list shows a box; the typed value goes to the CRM in place of "Other". Source
+  `Promo popup`. `compact` for the popup.
+- Home hero laid out like the owner's promo, words only, no photos (owner: the artwork "looks out of place", and they
+  "dont like this boxy pattern behind"): sky-blue gradient (map grid kept only behind the boarding pass), "Your study
+  abroad partner", h1 "Tell us how we can help." (red, with swoosh), intro, three promise pills (`HERO_STEPS`), navy
+  trust band with the yellow sweep (`HERO_PROOF`), destination chips above the form, and a "Plan your study abroad
+  journey today!" strip with the phone number. Stamps and the See the route / Call buttons removed (the strip calls).
+- `components/Flags.tsx` (SVG: emoji flags are letters on Windows; `DestinationChips` shared by popup and hero). `lib/site.ts` `INTERESTS`.
+  `globals.css`: `flame` (logo red), `gold` (button yellow).
+- `lib/validation.ts` `checkOther`: also refuses filler ("na", "other", "aaaa"), mostly digits and odd symbols. The
+  boarding pass's "Other" country / test boxes get it too.
+- A first try, a separate `/enquiry` page with visa photos, was dropped (owner: not what they meant).
+
+### Assumptions I made
+- The artwork's own text stays as the owner made it, including "We confirm your enquiry straight away", "5000+
+  Students Guided" and "High Visa Success Rate". The CRM sends no confirmation yet (W6): owner to confirm or send a
+  revised image.
+- **Study visas 4,000+ → 5,000+ everywhere** (owner, 6 Nov, to match the artwork): `content/stats.ts`, numbers band,
+  home wall title and "Why us" badge, success stories, about. Tourist visas stay 5,000+. Baked-in text is repeated in the alt text.
+- `INTERESTS` is our draft list: owner to review. `FEATURED_WINS` (content/testimonials.ts) is no longer used on the
+  home page; kept as data.
+
+### Verification status
+- `npm run lint`, `npm run build`, `npx tsc --noEmit` pass. Browser (1440 px, 390 px): popup opens, × closes it,
+  stays closed after reload; sending from the popup (CRM reply mocked) went to /thank-you with the popup closed and
+  `preferredCountry: "Australia"` from the "Other" box.
+
+## Session: W8 — Drive photos, headline numbers, interactive stages, sample tests (owner, 5 Nov)
 
 ### What I did
 - **Testimonial photos** from the owner's public Drive folder (179 files, ~60 iPhone HEIC). Converted to JPG, longest

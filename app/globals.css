@@ -17,6 +17,10 @@
   --color-paper-dark: #e5edf9;
   --color-line: #d8e2f1;
   --color-ink: #0f1633;
+  /* The red of "WESTERN" in the office logo and a call-to-action yellow (enquiry page, owner's mock-up 6 Nov 2026). */
+  --color-flame: #e3202b;
+  --color-gold: #ffc629;
+  --color-gold-dark: #f5b400;
   --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--ff-display), var(--ff-body), ui-sans-serif, sans-serif;
   --font-mono: var(--ff-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -74,18 +78,8 @@
 }
 
 /* Motion: CSS only, never required to read the page, off for people who ask for less. */
-@keyframes flap {
-  0% { transform: rotateX(90deg); opacity: 0; }
-  100% { transform: rotateX(0); opacity: 1; }
-}
-
 @keyframes marquee {
   to { transform: translateX(-50%); }
-}
-
-.flap {
-  animation: flap 0.5s cubic-bezier(.2,.8,.2,1) both;
-  transform-origin: top;
 }
 
 .marquee {
@@ -277,7 +271,7 @@ details[open] > :not(summary) {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .flap, .marquee, .sign-icon, .journey-timer, .journey-detail, [data-reveal] > *, .reveal, .fly-arc, .fly-line, .turn-slow, .drift,
+  .marquee, .sign-icon, .journey-timer, .journey-detail, [data-reveal] > *, .reveal, .fly-arc, .fly-line, .turn-slow, .drift,
   .hero-rise, .hero-rise-2, details[open] > :not(summary) { animation: none !important; }
   .fly-arc { display: none; }
   [data-reveal] > * { opacity: 1 !important; }

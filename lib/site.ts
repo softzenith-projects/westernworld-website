@@ -23,24 +23,39 @@ export const tel = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
 export type NavItem = { label: string; href: string; children?: NavItem[] };
 
 /**
- * Study destinations, each with its nearest major airport and a typical flight time from Delhi (for the departures board).
- * The owner's list and order (20 Oct 2026); each needs a matching entry in content/countries.json. France is not on the
- * list: its page (/study-in/france) still exists but is no longer in the menu, board or forms.
+ * Study destinations, each with its nearest major airport and a typical flight time from Delhi (for the destination
+ * cards and the boarding pass). The owner's list and order (20 Oct 2026); each needs a matching entry in
+ * content/countries.json. France is not on the list: its page (/study-in/france) still exists but is no longer in the
+ * menu, cards or forms.
+ *
+ * `photo`: public/images/destinations/<slug>.jpg, from Unsplash (Unsplash License: free to use, no credit required;
+ * downloaded 6 Nov 2026, resized to 1200 px, metadata stripped). Photographers, for the record: UK Tom Athawes, Canada
+ * mwangi gatheca, Germany Xander Gonera, Finland Xavier Coiffic, USA Patrick Tomasso, New Zealand Sulthan Auliya,
+ * Ireland Alessandro Santoro, Malta Michail Tsapas, Singapore Arul Kumaran, Cyprus Hert Niks.
  */
 export const DESTINATIONS = [
-  { slug: "uk", name: "UK", code: "LHR", city: "London", flight: "9h 45m" },
-  { slug: "canada", name: "Canada", code: "YYZ", city: "Toronto", flight: "14h 30m" },
-  { slug: "germany", name: "Germany", code: "FRA", city: "Frankfurt", flight: "8h 40m" },
-  { slug: "finland", name: "Finland", code: "HEL", city: "Helsinki", flight: "9h 10m" },
-  { slug: "usa", name: "USA", code: "JFK", city: "New York", flight: "15h 30m" },
-  { slug: "new-zealand", name: "New Zealand", code: "AKL", city: "Auckland", flight: "16h 30m" },
-  { slug: "ireland", name: "Ireland", code: "DUB", city: "Dublin", flight: "11h 50m" },
-  { slug: "malta", name: "Malta", code: "MLA", city: "Valletta", flight: "11h 30m" },
-  { slug: "singapore", name: "Singapore", code: "SIN", city: "Singapore", flight: "5h 50m" },
-  { slug: "cyprus", name: "Cyprus", code: "LCA", city: "Larnaca", flight: "9h 40m" },
+  { slug: "uk", name: "UK", code: "LHR", city: "London", flight: "9h 45m", photo: "/images/destinations/uk.jpg", scene: "Big Ben and the Palace of Westminster at sunset" },
+  { slug: "canada", name: "Canada", code: "YYZ", city: "Toronto", flight: "14h 30m", photo: "/images/destinations/canada.jpg", scene: "Toronto and the CN Tower at golden hour" },
+  { slug: "germany", name: "Germany", code: "FRA", city: "Frankfurt", flight: "8h 40m", photo: "/images/destinations/germany.jpg", scene: "The Brandenburg Gate in Berlin" },
+  { slug: "finland", name: "Finland", code: "HEL", city: "Helsinki", flight: "9h 10m", photo: "/images/destinations/finland.jpg", scene: "Helsinki Cathedral" },
+  { slug: "usa", name: "USA", code: "JFK", city: "New York", flight: "15h 30m", photo: "/images/destinations/usa.jpg", scene: "The Manhattan skyline over the East River" },
+  { slug: "new-zealand", name: "New Zealand", code: "AKL", city: "Auckland", flight: "16h 30m", photo: "/images/destinations/new-zealand.jpg", scene: "Auckland and the Sky Tower across the harbour" },
+  { slug: "ireland", name: "Ireland", code: "DUB", city: "Dublin", flight: "11h 50m", photo: "/images/destinations/ireland.jpg", scene: "The Ha'penny Bridge over the River Liffey in Dublin" },
+  { slug: "malta", name: "Malta", code: "MLA", city: "Valletta", flight: "11h 30m", photo: "/images/destinations/malta.jpg", scene: "A Valletta street of wooden balconies above the Grand Harbour" },
+  { slug: "singapore", name: "Singapore", code: "SIN", city: "Singapore", flight: "5h 50m", photo: "/images/destinations/singapore.jpg", scene: "Marina Bay, Singapore, at dusk" },
+  { slug: "cyprus", name: "Cyprus", code: "LCA", city: "Larnaca", flight: "9h 40m", photo: "/images/destinations/cyprus.jpg", scene: "The palm-lined seafront in Larnaca" },
 ] as const;
 
-export type Branch = { name: string; area: string; address?: string; head?: boolean };
+/**
+ * "Interested in" on the enquiry page (/enquiry), drawn from the services and numbers on this site; the owner reviews
+ * the list. The form adds "Other" with a box to type in, like the destinations.
+ */
+export const INTERESTS = [
+  "Study visa", "Tourist / visitor visa", "IELTS / PTE coaching", "TOEFL / Duolingo coaching", "Career counselling",
+  "Education loan & scholarships",
+] as const;
+
+export type Branch ={ name: string; area: string; address?: string; head?: boolean };
 
 /**
  * Offices (owner, 20 Oct 2026: Rohtak, B'garh, Rohini, Tohana, Dwarka). Only Rohtak's street address is known; add

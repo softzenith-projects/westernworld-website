@@ -80,8 +80,27 @@ export function checkCourse(raw: string) {
 }
 
 /** An "Other" choice: the visitor types what they mean (e.g. a country that is not in the list). */
-export const checkOther = (what: string, example: string) => (raw: string) =>
-  tidy(raw) ? "" : `Which ${what}? Type its name, e.g. ${example}.`;
+export const checkOther = (what: string, example: string) => (raw: string) => {
+  const v = tidy(raw);
+  if (!v) return `Which ${what}? Type its name, e.g. ${example}.`;
+  if (!OTHER_TEXT.test(v)) return `Just letters, numbers and simple punctuation, please, e.g. ${example}.`;
+  const letters = v.replace(/[^\p{L}]/gu, "").toLowerCase();
+  const digits = v.replace(/\D/g, "").length;
+  if (letters.length < 2) return `That’s a little short. Type the ${what}’s name, e.g. ${example}.`;
+  const said = v.toLowerCase().replace(/[^\p{L}\s]/gu, "").replace(/\s+/g, " ").trim();
+  if (NON_ANSWERS.has(said) || /^(.)\1+$/u.test(letters) || digits > letters.length) {
+    return `“${v}” doesn’t tell us much. Which ${what} do you have in mind? e.g. ${example}.`;
+  }
+  return "";
+};
+
+/** Letters first, then letters, numbers and the punctuation names use ("St. Kitts & Nevis", "German A2", "B.Sc / M.Sc"). */
+const OTHER_TEXT = /^[\p{L}\p{M}][\p{L}\p{M}\d .,'’&()/+-]*$/u;
+/** Typed under "Other" but not an answer a counsellor can act on. Compared lower-case, punctuation removed. */
+const NON_ANSWERS = new Set([
+  "other", "others", "na", "n a", "none", "nothing", "no", "nil", "any", "anything", "something", "not sure",
+  "dont know", "do not know", "idk", "test", "testing", "abc", "xyz", "asdf", "qwerty",
+]);
 
 /** Valid scores per English test (official scales). Tests not listed here ("Other") are only checked for digits. */
 const SCORE_SCALES: Record<string, { min: number; max: number; step: number; hint: string }> = {

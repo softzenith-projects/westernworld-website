@@ -63,11 +63,11 @@ Without a backend the pages work; only form submits fail.
 | Congratulations posters | `public/wins/posters/` + `VISA_POSTERS` in `content/testimonials.ts` |
 | IELTS scorecards | `public/ieltsstu/` + `SCORECARDS` in `content/testimonials.ts` |
 | Free sample test links (IELTS / PTE / TOEFL / Duolingo) | `PRACTICE` in `content/services.ts` |
-| Which photos lead the home "Wall of wins" | `content/testimonials.ts` → `FEATURED` (first = the large photo) |
+| Which students the home page shows (3 cards, the only student photos on home) | `content/testimonials.ts` → `FEATURED` (first three) |
 | Logo | `public/images/logo.svg` (header and footer) |
 | Theme colours (blue & white) | `app/globals.css` → `@theme` tokens (`brand`, `accent`, `sun`, `paper`, `line`) |
 | Services | `content/services.ts` (each gets `/services/<slug>`) |
-| Destinations (menu, board, footer, boarding pass) | `DESTINATIONS` in `lib/site.ts` (needs a matching entry in `content/countries.json`) |
+| Destinations (menu, home photo cards, footer, boarding pass) | `DESTINATIONS` in `lib/site.ts` (needs a matching entry in `content/countries.json`; card photo `public/images/destinations/<slug>.jpg`) |
 | Phone, email, address, social links | `SITE` in `lib/site.ts` |
 | Branches (contact page, home "Visit us", footer) | `BRANCHES` in `lib/site.ts`: add `address` when known |
 | Home numbers (study visas, results…) | `STATS` in `app/page.tsx` |
