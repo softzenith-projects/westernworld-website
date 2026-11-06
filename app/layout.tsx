@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Motion from "@/components/Motion";
 import Footer from "@/components/Footer";
 import FloatingContact from "@/components/FloatingContact";
+import PromoPopup from "@/components/PromoPopup";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="flex-1">{children}</main>
         <Footer />
         <FloatingContact />
+        <PromoPopup />
       </body>
     </html>
   );

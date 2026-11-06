@@ -6,7 +6,7 @@ import { SCORECARDS, VISA_POSTERS, VISA_WINS } from "@/content/testimonials";
 
 export const metadata: Metadata = {
   title: "Success stories",
-  description: "4,000+ study visas and 5,000+ tourist visas: Western World students with their visas, congratulations posters and IELTS results, photographed at our office.",
+  description: "5,000+ study visas and 5,000+ tourist visas: Western World students with their visas, congratulations posters and IELTS results, photographed at our office.",
 };
 
 export default function SuccessStoriesPage() {
@@ -17,7 +17,7 @@ export default function SuccessStoriesPage() {
         <div className="relative mx-auto max-w-7xl px-4">
           <p className="tag text-sun">Success stories</p>
           <h1 className="mt-3 max-w-4xl text-4xl leading-[1.02] font-semibold text-white sm:text-6xl">
-            4,000+ study visas and 5,000+ tourist visas. Here are {VISA_WINS.length} of them on camera.
+            5,000+ study visas and 5,000+ tourist visas. Here are {VISA_WINS.length} of them on camera.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-white/70">
             Every photo was taken at our office on the day a student collected their passport, plus {VISA_POSTERS.length} congratulations

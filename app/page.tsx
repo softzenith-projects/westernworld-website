@@ -2,23 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import {
-  ArrowRight, ArrowUpRight, BadgeCheck, ClipboardCheck, MapPin, Plus, Route, Stethoscope,
-  Target, Timer, UserRound, UsersRound,
+  ArrowRight, ArrowUpRight, BadgeCheck, CalendarDays, ClipboardCheck, MapPin, PhoneCall, Plane, Plus, Route,
+  ShieldCheck, Stethoscope, Target, Timer, UserRound, UsersRound, Zap,
 } from "lucide-react";
 import BoardingPass from "@/components/BoardingPass";
-import CountUp from "@/components/CountUp";
-import NumbersBand from "@/components/NumbersBand";
+import Destinations from "@/components/Destinations";
+import { DestinationChips } from "@/components/Flags";
+import { NumbersStrip } from "@/components/NumbersBand";
 import JourneyRoute from "@/components/JourneyRoute";
 import NewsletterBox from "@/components/NewsletterBox";
 import VideoStories from "@/components/VideoStories";
-import WallOfWins from "@/components/WallOfWins";
 import { BranchList, Packages, SampleTests, Section, SectionTitle } from "@/components/blocks";
-import { DeparturesBoard } from "@/components/journey";
 import { NewsSection } from "@/components/news";
 import { HOME_PACKAGES } from "@/content/copy";
 import { LEGS } from "@/content/services";
-import { STATS } from "@/content/stats";
-import { FEATURED_WINS, SCORECARDS, VISA_POSTERS, VISA_WINS, winLabel } from "@/content/testimonials";
+import { FEATURED_WINS, VISA_WINS, winAlt, type Country } from "@/content/testimonials";
 import { BRANCHES, DESTINATIONS, SITE, enquire, tel } from "@/lib/site";
 
 const FAQ = [
@@ -73,130 +71,131 @@ const HIGHLIGHTS = [
   ["IELTS | PTE Training", "Western World Visa Services started its journey with a clear vision to be a pioneer in the field of immigration and IELTS / PTE / CELPIP training.", "/services/english-test-preparation"],
 ] as const;
 
+/** The hero, in the words of the owner's promo artwork (6 Nov 2026). */
+const HERO_STEPS = [
+  { Icon: Zap, text: "We confirm your enquiry straight away" },
+  { Icon: UsersRound, text: "Someone from our team calls you back" },
+  { Icon: ShieldCheck, text: "Your details are only used to answer your enquiry" },
+];
+
+/**
+ * Student photos are shown in this one place on the home page (owner, 6 Nov 2026: "photos at only 1 place", like the
+ * Figma reference): three students from FEATURED_WINS (content/testimonials.ts; reorder there to change who is shown).
+ * Every photo, poster and scorecard is on /success-stories.
+ */
+const PROOF = FEATURED_WINS.slice(0, 3);
+const COUNTRY_NAME: Record<Country, string> = { UK: "United Kingdom", Canada: "Canada", Germany: "Germany", Cyprus: "Cyprus" };
+
 /** "Bahadurgarh, Rohini, Tohana or Dwarka" */
 const OTHER_BRANCHES = BRANCHES.filter((b) => !b.head).map((b) => b.name).join(", ").replace(/, ([^,]*)$/, " or $1");
 
 const serviceCount = LEGS.reduce((n, l) => n + l.services.length, 0);
 
-/** A passport-style rubber stamp (decorative). */
-function Stamp({ text, sub, className }: { text: string; sub: string; className: string }) {
-  return (
-    <svg viewBox="0 0 120 120" className={className} aria-hidden>
-      <defs><path id={`arc-${text}`} d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0" /></defs>
-      <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <text fontFamily="var(--ff-mono)" fontSize="11" letterSpacing="3" fill="currentColor">
-        <textPath href={`#arc-${text}`}>{`${sub} · ${sub} · `}</textPath>
-      </text>
-      <text x="60" y="65" textAnchor="middle" fontFamily="var(--ff-mono)" fontSize="13" fontWeight="600" fill="currentColor">{text}</text>
-    </svg>
-  );
-}
+/** "+91-7027022554" → "702 702 2554", as the promo prints it. */
+const HERO_PHONE = SITE.phones[0].replace(/\D/g, "").slice(-10).replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3");
 
 export default function Home() {
   return (
     <>
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative isolate overflow-hidden">
-        <div className="map-grid absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden />
-        <Stamp text="APPROVED" sub="STUDENT VISA" className="absolute top-10 right-[46%] -z-10 hidden size-36 rotate-[-14deg] text-accent/25 lg:block" />
-        <Stamp text="ARRIVED" sub="WELCOME" className="absolute bottom-10 left-[38%] -z-10 hidden size-28 rotate-[10deg] text-brand/15 lg:block" />
+      {/* ── Hero: the owner's promo (6 Nov 2026) as a page, sky background, no photos ── */}
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-white via-[#e4f1fe] to-[#8fcbfd]">
+        <div className="absolute -top-24 left-1/3 -z-10 h-72 w-[36rem] rounded-full bg-white/70 blur-3xl" aria-hidden />
+        <div className="absolute right-0 bottom-0 -z-10 h-80 w-[40rem] rounded-full bg-[#5fb4fb]/40 blur-3xl" aria-hidden />
+        <div className="absolute top-10 left-[41%] hidden items-center lg:flex" aria-hidden>
+          <span className="h-0.5 w-40 rounded-full bg-gradient-to-r from-transparent to-white" />
+          <Plane className="size-12 rotate-[-8deg] fill-white text-brand" strokeWidth={1.25} />
+        </div>
 
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-10 pb-16 lg:grid-cols-[1.1fr_1fr] lg:pt-16 lg:pb-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pt-10 pb-8 lg:grid-cols-[1.15fr_1fr] lg:pt-14">
           <div>
-            <p className="tag inline-flex items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 text-ink">
-              <span className="size-1.5 rounded-full bg-accent" /> Visa consultant · IELTS / PTE coaching · Rohtak
+            {/* Says what we do first (owner, 6 Nov: "Tell us how we can help" alone did not); the promo's line leads into the steps. */}
+            <p className="inline-block rounded-full bg-white/80 px-3.5 py-1.5 text-[13px] font-semibold text-brand ring-1 ring-white sm:text-sm">
+              <span className="mr-2 inline-block size-1.5 rounded-full bg-accent align-middle" aria-hidden />
+              Study visa consultant · IELTS &amp; PTE coaching · Rohtak
             </p>
-            <h1 className="mt-6 text-[2.75rem] leading-[0.98] font-semibold sm:text-7xl xl:text-[5.25rem]">
-              Every step to your campus abroad.{" "}
-              <span className="relative whitespace-nowrap text-accent">
-                Under one roof.
-                <svg viewBox="0 0 300 12" className="absolute -bottom-2 left-0 w-full text-accent/40" preserveAspectRatio="none" aria-hidden>
-                  <path d="M2 9 C 80 2, 200 2, 298 7" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <h1 className="mt-5 font-display text-[2.3rem] leading-[1.04] font-bold tracking-tight text-brand-dark sm:text-5xl lg:text-[2.9rem] xl:text-[3.6rem]">
+              Study in the UK, Canada or Europe.{" "}
+              <span className="relative text-accent sm:inline-block sm:whitespace-nowrap">
+                We guide every step.
+                <svg viewBox="0 0 300 14" className="absolute -bottom-3 left-[18%] hidden w-[80%] text-accent sm:block" preserveAspectRatio="none" aria-hidden>
+                  <path d="M2 11 C 90 1, 210 1, 298 6" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" />
                 </svg>
               </span>
             </h1>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-slate-600">
-              Career counselling, test prep, applications, SOPs, scholarships, loans, the visa, forex, flights, a room and
-              your first part-time job. {serviceCount} services, one team, from your first doubt to your first day abroad.
+            <p className="mt-7 max-w-xl text-lg leading-snug text-slate-700 sm:text-xl">
+              Career counselling, IELTS &amp; PTE coaching, university applications and your student visa, all from one
+              team.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="#route" className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent">
-                See the route <ArrowRight className="size-4" />
-              </Link>
-              <a href={tel(SITE.phones[0])} className="rounded-full border border-ink/20 px-6 py-3.5 text-sm font-semibold text-ink transition hover:border-ink">
-                Call {SITE.phones[0]}
-              </a>
-            </div>
-
-            <Link href="#wins" className="group mt-10 flex w-fit items-center gap-4 rounded-2xl border border-line bg-white p-3 pr-5 shadow-sm transition hover:border-accent hover:shadow-md">
-              <span className="flex -space-x-3">
-                {FEATURED_WINS.slice(0, 5).map(({ src }) => (
-                  <span key={src} className="relative size-14 overflow-hidden rounded-full ring-3 ring-white">
-                    <Image src={src} alt="" fill sizes="56px" className="object-cover object-[50%_25%]" />
-                  </span>
-                ))}
-              </span>
-              <span className="text-sm leading-snug text-slate-600">
-                <span className="flex items-center gap-1 font-semibold text-ink"><BadgeCheck className="size-4 text-accent" />4k+ students with a study visa</span>
-                and 5k+ tourist visas, and counting.
-                <span className="block font-medium text-accent group-hover:underline">See our students →</span>
-              </span>
-            </Link>
+            <p className="mt-6 font-display text-lg font-semibold text-brand-dark">
+              Tell us how we can help. <span className="font-normal text-slate-600">It takes under a minute.</span>
+            </p>
+            <ul className="mt-4 grid max-w-md gap-3">
+              {HERO_STEPS.map(({ Icon, text }) => (
+                <li key={text} className="flex items-center gap-4 rounded-full bg-white/90 py-2 pr-6 pl-2 text-[15px] leading-snug font-medium text-brand-dark shadow-[0_10px_30px_-14px_rgb(14_22_69/0.45)] ring-1 ring-white sm:text-base">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-accent text-white"><Icon className="size-5" aria-hidden /></span>
+                  {text}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div id="counselling" className="relative scroll-mt-28 lg:pl-6">
-            <BoardingPass />
+          <div id="counselling" className="relative scroll-mt-28 lg:pl-4">
+            <DestinationChips className="mb-4 ml-auto w-full max-w-md sm:w-fit sm:gap-3" />
+            {/* The site's map grid stays, behind the form only. */}
+            <div className="relative isolate rounded-[2rem] bg-white/60 p-3 shadow-xl shadow-brand-dark/10 ring-1 ring-white sm:p-5">
+              <div className="map-grid absolute inset-0 -z-10 rounded-[2rem]" aria-hidden />
+              <BoardingPass />
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-4 pb-10">
+          {/* The owner's numbers, once on this page (owner, 6 Nov 2026): the hero's foot, right under the form. */}
+          <h2 className="sr-only">Our track record</h2>
+          <NumbersStrip className="mb-5 shadow-xl shadow-brand-dark/20" />
+          <div className="flex flex-col items-center gap-4 rounded-[2rem] bg-white/90 p-3 shadow-lg shadow-brand-dark/10 ring-1 ring-white sm:flex-row sm:justify-between sm:pl-8">
+            <p className="flex items-center gap-3 text-center font-display text-xl font-semibold text-brand-dark italic sm:text-2xl">
+              <CalendarDays className="size-8 shrink-0 text-brand" aria-hidden />
+              <span>Plan your study abroad journey <span className="text-accent">today!</span></span>
+            </p>
+            <a href={tel(SITE.phones[0])} aria-label={`Call ${SITE.phones[0]}`}
+               className="inline-flex items-center gap-3 rounded-full bg-brand-dark px-7 py-3 font-display text-2xl font-bold text-white transition hover:bg-brand sm:text-3xl">
+              <PhoneCall className="size-6 sm:size-7" aria-hidden /> {HERO_PHONE}
+            </a>
           </div>
         </div>
       </section>
 
-      <NumbersBand />
-
-      {/* ── Wall of wins (testimonials): straight after the numbers, photos are our strongest proof ── */}
+      {/* ── Real students, real visas: the one place on the home page with student photos ── */}
       <section id="wins" className="relative scroll-mt-24 border-t border-line bg-white py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <SectionTitle eyebrow="Wall of wins" title={<>4,000+ happy students.<br />One visa at a time.</>}
-                          intro="Not stock photos: every student here collected their passport with the visa at our office. Filter by country, or flip through the congratulations posters." />
-            <dl className="mb-10 grid shrink-0 grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line lg:mb-14">
-              {[[VISA_WINS.length, "Visas on camera"], [VISA_POSTERS.length, "Posters"], [SCORECARDS.length, "IELTS scorecards"]].map(([n, label]) => (
-                <div key={label} className="flex flex-col bg-paper px-5 py-4">
-                  <dt className="tag order-2 text-slate-500">{label}</dt>
-                  <dd className="font-display text-3xl font-semibold text-brand">{n}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <WallOfWins limit={12} feature light />
-          <p className="mt-6 text-center">
-            <Link href="/success-stories" className="tag inline-flex items-center gap-1 text-accent hover:underline">
-              All success stories <ArrowUpRight className="size-3.5" />
+          <SectionTitle center eyebrow="Success stories" title={<>Real students.<br />Real visas.</>}
+                        intro="Every face below is a Western World student who collected their visa at our office." />
+          {/* Phones: a swipeable row (three tall cards stacked would fill three screens); tablets and up: three across. */}
+          <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-4 pb-2 sm:mx-auto sm:grid sm:max-w-6xl sm:grid-cols-3 sm:items-start sm:gap-5 sm:overflow-visible sm:px-0 lg:gap-8">
+            {PROOF.map((w, i) => (
+              <li key={w.src} style={{ "--i": i } as CSSProperties} className={`reveal w-[78%] shrink-0 snap-center sm:w-auto ${i === 1 ? "sm:-mt-4" : ""}`}>
+                <figure className="group relative overflow-hidden rounded-xl bg-paper shadow-lg shadow-brand-dark/10">
+                  <div className="relative aspect-[4/5]">
+                    <Image src={w.src} alt={winAlt(w)} fill quality={85} sizes="(min-width: 1280px) 540px, (min-width: 640px) 46vw, 115vw"
+                           className="object-cover object-[50%_30%] transition duration-700 group-hover:scale-[1.03]" />
+                  </div>
+                  <figcaption className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-lg bg-white/95 px-4 py-3 shadow-lg backdrop-blur">
+                    <span className="min-w-0">
+                      <span className="block font-semibold text-ink">{w.name}</span>
+                      {w.country && <span className="block text-xs text-slate-500">{COUNTRY_NAME[w.country]}</span>}
+                    </span>
+                    <span className="tag inline-flex shrink-0 items-center gap-1 text-accent"><BadgeCheck className="size-4" aria-hidden />Visa approved</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-10 text-center">
+            <Link href="/success-stories" className="inline-flex items-center gap-1.5 rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:border-accent hover:text-accent">
+              See all {VISA_WINS.length} students, posters and scorecards <ArrowRight className="size-4" aria-hidden />
             </Link>
           </p>
-        </div>
-      </section>
-
-      {/* ── Congratulations posters reel (pauses under the pointer) ── */}
-      <section aria-labelledby="posters-title" className="overflow-hidden border-t border-line bg-paper py-12 lg:py-16">
-        <div className="mx-auto mb-8 flex max-w-7xl flex-wrap items-end justify-between gap-4 px-4">
-          <div>
-            <p className="tag text-accent">Fresh off the press</p>
-            <h3 id="posters-title" className="mt-2 text-3xl font-semibold">Congratulations, you are flying!</h3>
-          </div>
-          <Link href="/success-stories" className="tag inline-flex items-center gap-1 text-ink hover:text-accent">
-            See all {VISA_POSTERS.length} posters <ArrowUpRight className="size-3.5" />
-          </Link>
-        </div>
-        <div className="marquee-hover-pause" aria-hidden>
-          <div className="marquee flex w-max gap-4 [animation-duration:110s]">
-            {[0, 1].map((copy) => VISA_POSTERS.map((p) => (
-              <div key={`${copy}-${p.src}`} title={winLabel(p)}
-                   className="relative size-52 shrink-0 overflow-hidden rounded-xl bg-white shadow-lg shadow-brand-dark/10 ring-1 ring-line transition duration-300 hover:-translate-y-1.5 hover:rotate-[-1.5deg] hover:shadow-2xl sm:size-60">
-                <Image src={p.src} alt="" fill sizes="240px" className="object-contain" />
-              </div>
-            )))}
-          </div>
         </div>
       </section>
 
@@ -269,20 +268,17 @@ export default function Home() {
         <JourneyRoute />
       </Section>
 
-      {/* ── Destinations ────────────────────────────────────── */}
-      <Section id="destinations">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.4fr] lg:items-center">
-          <div>
-            <SectionTitle eyebrow="Global education" title="Where to?" />
-            <p className="-mt-6 text-lg text-slate-600">
-              We help with universities and colleges in {DESTINATIONS.length} countries: courses, admissions,
-              scholarships and the visa. Pick a destination to see its universities.
-            </p>
-            <Image src="/wins/visa-070.jpg" alt="A Western World student receiving her visa at our office" width={640} height={600}
-                   sizes="(min-width: 1024px) 33vw, 100vw" className="mt-8 hidden aspect-[4/3] rounded-xl object-cover object-[50%_35%] lg:block" />
-          </div>
-          <DeparturesBoard />
+      {/* ── Destinations: city photo cards (kept from the Nov 2026 refresh, owner liked them) ── */}
+      <Section id="destinations" className="bg-white">
+        <div className="flex flex-col justify-between gap-x-10 md:flex-row md:items-end">
+          <SectionTitle eyebrow="Global education" title="Where will you study next?"
+                        intro={`Universities and colleges in ${DESTINATIONS.length} countries: courses, admissions, scholarships and the visa, handled by one team. Pick a destination to see its universities.`} />
+          <Link href={enquire("Free counselling")}
+                className="group mb-10 inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-brand transition hover:text-accent lg:mb-14">
+            Not sure yet? Ask a counsellor <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+          </Link>
         </div>
+        <Destinations />
       </Section>
 
       {/* ── Test prep ───────────────────────────────────────── */}
@@ -333,20 +329,12 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* ── Why us ──────────────────────────────────────────── */}
+      {/* ── Why us (no photo here: student photos are shown once, above) ── */}
       <Section>
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div className="relative">
-            <Image src="/wins/uk-lokesh-127.jpg" alt="A Western World counsellor handing a student his visa" width={1280} height={720}
-                   sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/11] w-full rounded-xl object-cover" />
-            <div className="absolute -bottom-6 left-6 rounded-xl bg-sun px-5 py-4 shadow-xl">
-              <p className="font-display text-4xl font-semibold text-ink">4,000+</p>
-              <p className="tag text-ink/70">{STATS[0].label}</p>
-            </div>
-          </div>
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr]">
+          <SectionTitle eyebrow="Why us?" title="We study every case before we take it on." />
           <div>
-            <SectionTitle eyebrow="Why us?" title="We study every case before we take it on." />
-            <div className="-mt-4 space-y-4 text-slate-600">
+            <div className="space-y-4 text-slate-600">
               <p>
                 With extreme hard work and transparency, Western World Visa Services has succeeded in developing its
                 position as one of the leading education consultancies. We, at WWVS, have a team of passionate and
@@ -364,14 +352,6 @@ export default function Home() {
                 benchmarks in tune with global competencies.
               </p>
             </div>
-            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line">
-              {STATS.map(({ n, label }) => (
-                <div key={label} className="flex flex-col bg-paper p-4">
-                  <dt className="tag order-2 text-slate-500">{label}</dt>
-                  <dd className="font-display text-3xl font-semibold text-ink">{n ? <CountUp to={n} suffix="+" /> : "Countless"}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
         </div>
       </Section>

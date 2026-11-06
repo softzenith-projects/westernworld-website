@@ -36,7 +36,7 @@ export default function AboutPage() {
           ))}
         </div>
       </WithCallback>
-      <NumbersBand title={<>Since 2020: 4,000+ study visas and counting. <span className="text-sun">Come and meet the team.</span></>} />
+      <NumbersBand title={<>Since 2020: 5,000+ study visas and counting. <span className="text-sun">Come and meet the team.</span></>} />
       <CtaBand />
     </>
   );

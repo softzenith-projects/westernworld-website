@@ -48,6 +48,8 @@ const PAGES = [
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
+    // 75 = Next's default; 85 for the home page's student and destination photos (sharper, still compressed).
+    qualities: [75, 85],
     // Video-story thumbnails (optimised through this site, so the CSP keeps img-src 'self').
     remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
   },
