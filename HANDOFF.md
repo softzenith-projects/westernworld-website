@@ -18,8 +18,8 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W6 | Thank-you page and form notes no longer promise an email/WhatsApp confirmation (the CRM does not send them yet); thank-you shows call back, WhatsApp chat link, phone | done (branch `fix/thank-you-wording`, stacked on `feat/trust1-proxy`) |
 | W7 | Owner's notes (20 Oct): destinations list + "Other", boarding pass timing / test scores, winding route with picture signs, new numbers, branches, Rohtak SEO phrases | done (branch `feat/client-notes-20oct`, PR into `develop`); logo waits for the owner's file |
 | W8 | Owner's notes (5 Nov): Drive testimonial photos + posters, 4k+ / 5k+ headlines, interactive route icons, free sample test links | done (same branch and PR as W7) |
-| W9 | Owner's promo (6 Nov): popup on landing (their artwork + the real form with "Other" → type it; × / Esc / outside click; quiet 7 days after closing or sending), same artwork replaces the home hero headline; stricter "Other" check site-wide | done, uncommitted; branch `feat/enquiry-page` (stacked on `feat/client-notes-20oct`) |
-| W10 | Premium refresh tried and reverted (owner: back to the W9 design), keeping only the destination photo cards; home shows student photos in one place (3 cards) | done, uncommitted; same branch `feat/enquiry-page` |
+| W9 | Owner's promo (6 Nov): popup on landing (their artwork + the real form with "Other" → type it; × / Esc / outside click; quiet 7 days after closing or sending), same artwork replaces the home hero headline; stricter "Other" check site-wide | done; on `develop` (a30e430, pushed directly, owner's request 6 Nov) |
+| W10 | Premium refresh tried and reverted (owner: back to the W9 design), keeping only the destination photo cards; home shows student photos in one place (3 cards) | done; on `develop` (a30e430) |
 | next | Owner copy review → merge `develop` → `main`; hosting (Vercel Pro) + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, `CRM_PROXY_SECRET`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
