@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
-import EnquiryForm from "@/components/EnquiryForm";
 import { CallScene } from "@/components/Illustrations";
 import SocialIcons from "@/components/SocialIcons";
-import { BranchList, PageHero, Section } from "@/components/blocks";
+import { BranchList, CallbackCard, PageHero, Section } from "@/components/blocks";
 import { SITE, tel } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Contact Us" };
@@ -20,7 +19,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
       <PageHero title="Contact Us" crumbs={[{ label: "Contact Us" }]}
                 subtitle="Call, WhatsApp, visit our office, or ask for a call back. Someone from our team will get in touch with you." />
       <Section>
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr]">
           <div className="space-y-5">
             <div className="overflow-hidden rounded-xl bg-brand-light/60 ring-1 ring-line">
               <CallScene className="mx-auto max-w-sm" />
@@ -55,18 +54,21 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
             <iframe title="Map to Western World Visa Services, Rohtak" loading="lazy" className="h-64 w-full rounded-xl border-0"
                     src={`https://www.google.com/maps?q=${encodeURIComponent(SITE.address)}&output=embed`} />
           </div>
-          <div id="enquiry" className="scroll-mt-32 rounded-xl bg-white p-6 shadow-xl ring-1 ring-slate-100 sm:p-8">
-            <EnquiryForm
-              key={`${course}-${first(q.email)}`}
-              title="Call Back Now"
-              subtitle="Fill in your details and we will call you back."
-              source={course ? `Call back (${course})` : "Call back (contact page)"}
-              fields={["name", "email", "mobile", "course"]}
-              defaults={{ course, email: first(q.email) }}
-              country={country}
-              submitLabel="Request a call back"
-            />
-          </div>
+          {/* The site's call-back card (as on About), with the contact page's fields. `#enquiry` is where every
+              "Book now / Ask about this" link lands, pre-filled; on phones the form comes first. */}
+          <CallbackCard
+            key={`${course}-${first(q.email)}`}
+            id="enquiry"
+            className="scroll-mt-32 max-lg:order-first"
+            title="Request a call back"
+            subtitle="Tell us what you are interested in and our counsellor will call you."
+            source={course ? `Call back (${course})` : "Call back (contact page)"}
+            fields={["name", "email", "mobile", "course"]}
+            courseLabel="Interested in"
+            defaults={{ course, email: first(q.email) }}
+            country={country}
+            submitLabel="Request a call back"
+          />
         </div>
       </Section>
     </>

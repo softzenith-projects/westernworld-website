@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { CSSProperties, ReactNode } from "react";
+import type { ComponentProps, CSSProperties, ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Check, ChevronRight, Clock, ExternalLink, FileText, Headphones, Laptop,
   MonitorCheck, Phone, Plane, Stamp, type LucideIcon,
@@ -285,19 +285,29 @@ export function Gallery({ images, title = "IELTS Students", intro }: { images: s
   );
 }
 
-/** Sticky side form used on content pages ("Request call back"). */
-export function CallbackCard({ source, course, country, title = "Request call back" }: {
-  source: string; course?: string; country?: string; title?: string;
+/**
+ * Sticky side form ("Request call back"): content pages, and the contact page (which passes its own fields and the
+ * values pre-filled from the link that brought the visitor there, e.g. ?course=…&email=…).
+ */
+export function CallbackCard({
+  source, course, country, title = "Request call back", subtitle = "Leave your details and our counsellor will call you.",
+  fields, defaults, courseLabel, submitLabel, id, className = "",
+}: {
+  source: string; course?: string; country?: string; title?: string; subtitle?: string;
+  fields?: ComponentProps<typeof EnquiryForm>["fields"];
+  defaults?: ComponentProps<typeof EnquiryForm>["defaults"];
+  courseLabel?: string; submitLabel?: string; id?: string; className?: string;
 }) {
   return (
-    <aside className="overflow-hidden rounded-xl bg-ink shadow-2xl shadow-brand-dark/20 lg:sticky lg:top-32 lg:self-start">
+    <aside id={id} className={`overflow-hidden rounded-xl bg-ink shadow-2xl shadow-brand-dark/20 lg:sticky lg:top-32 lg:self-start ${className}`}>
       <div className="flex items-center justify-between bg-accent px-6 py-2.5">
         <span className="tag text-white">Free · No obligation</span>
         <span className="barcode h-4 w-16 text-white/60" aria-hidden />
       </div>
-      <div className="p-6">
-        <EnquiryForm dark title={title} subtitle="Leave your details and our counsellor will call you." source={source}
-                     country={country} defaults={{ message: course ? `I am interested in ${course}.` : undefined }} />
+      <div className="p-6 sm:p-7">
+        <EnquiryForm dark title={title} subtitle={subtitle} source={source} country={country} fields={fields}
+                     courseLabel={courseLabel} submitLabel={submitLabel}
+                     defaults={defaults ?? { message: course ? `I am interested in ${course}.` : undefined }} />
         <div className="mt-5 border-t border-dashed border-white/15 pt-4 text-sm text-white/80">
           <p className="tag mb-2 text-white/50">Prefer to call?</p>
           {SITE.phones.map((p) => (

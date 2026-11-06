@@ -57,6 +57,11 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
   `app/page.tsx`), quality 85 for those photos (`images.qualities: [75, 85]` in `next.config.ts`, needed in Next 16),
   and the large UK card's photo re-saved at 1280 x 1600 (it was 960 wide). Measured: every one of the 13 home photos
   gets at least the pixels it is drawn at, at 1x / 1.25x / 1.5x / 2x desktop and 3x phone.
+- **Contact page form** (owner: "the weakest of all"): now the same dark call-back card as About (`CallbackCard`,
+  extended with `fields` / `defaults` / `courseLabel` / `submitLabel` / `id`), keeping the contact page's fields
+  (name, email, mobile, "Interested in" = course), the `?course=&country=&email=` pre-fill and the `#enquiry` anchor
+  every enquiry link lands on; first on phones. Checked: pre-fill, anchor, validation, submit (CRM mocked) → lead with
+  `serviceInterest`, `preferredCountry`, source "Call back (Trial class)" → /thank-you. On `develop`.
 - Note: `next dev` (port 3100) had left `.next/dev/types/routes.d.ts` and `validator.ts` half-written, which broke
   `tsc` and `next build`; deleted those two generated files and they were regenerated.
 
