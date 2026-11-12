@@ -39,7 +39,7 @@ export default function Header() {
       <div className="border-b border-line bg-paper/90 backdrop-blur-md">
         <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/" className="shrink-0">
-            <Image src="/images/logo.svg" alt={SITE.legalName} width={972} height={171} priority className="h-9 w-auto sm:h-10" />
+            <Image src="/images/logo.svg" alt={SITE.legalName} width={1866} height={1988} priority className="h-14 w-auto sm:h-16" />
           </Link>
 
           <nav aria-label="Main" className="hidden items-center xl:flex">

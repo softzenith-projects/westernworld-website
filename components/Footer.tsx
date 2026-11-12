@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div className="space-y-5">
             <div className="inline-block rounded-md bg-white px-3 py-2">
-              <Image src="/images/logo.svg" alt={SITE.legalName} width={972} height={171} className="h-9 w-auto" />
+              <Image src="/images/logo.svg" alt={SITE.legalName} width={1866} height={1988} className="h-24 w-auto" />
             </div>
             <p className="max-w-xs text-sm leading-relaxed">{SITE.footerAbout}</p>
             <ul className="space-y-2.5 text-sm">

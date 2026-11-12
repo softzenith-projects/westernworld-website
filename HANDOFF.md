@@ -236,7 +236,10 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 - Australia is not on the owner's destination list, although the announcement bar and news post are about Australia.
 
 ### Not done (needs the owner)
-- **Logo change**: no new logo file yet. Replace `public/images/logo.svg` (header + footer) when it arrives.
+- **Logo change** (owner, 12 Nov 2026): done. New square badge (globe, graduation cap, "WESTERN WORLD", plane) traced
+  from the owner's JPEG (`WhatsApp Image 2026-11-09 at 7.49.37 PM.jpeg`) into `public/images/logo.svg`: two flat
+  colours (#0a289b blue, #f24910 orange), plain paths only, no scripts or external refs; the "IELTS • PTE • STUDY VISA"
+  line under it was left out (unreadable at header size). Header `h-14 sm:h-16`, footer `h-24`.
 - **More visa / result photos, office photos**: done in W8 for visa photos (Drive folder); office photos have no slot yet.
 - **Branch street addresses** for Bahadurgarh, Rohini, Tohana, Dwarka (`BRANCHES[].address`).
 
